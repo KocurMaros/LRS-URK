@@ -173,4 +173,5 @@ log "Installation finished"
 printf 'ArduPilot:        %s\n' "$ARDUPILOT_DIR"
 printf 'ArduPilot Gazebo: %s\n' "$ARDUPILOT_GAZEBO_DIR"
 printf 'Run: source %s\n' "$BASHRC"
-printf 'A reboot is recommended.\n'
+printf 'Thank you for choosing the edisimo express installation\n'
+printf 'PLEASE REBOOT YOUR PC\n'

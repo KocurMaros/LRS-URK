@@ -62,4 +62,5 @@ if (( PURGE_PACKAGES )); then
   sudo apt autoremove -y
 fi
 
-echo "Uninstall finished. Open a new terminal."
+echo "Uninstall finished. Hope you had a fun ride!\n"
+echo "-sanger23\n"

@@ -21,12 +21,11 @@ case "${VERSION_ID:-}" in
 esac
 
 case "${1:-}" in
-  '') SCRIPT="install_ubuntu_${VERSION}.sh" ;;
-  --uninstall) SCRIPT="uninstall_ubuntu_${VERSION}.sh" ;;
+  '') exec "$SCRIPT_DIR/install/install_ubuntu_${VERSION}.sh" ;;
+  --uninstall) exec "$SCRIPT_DIR/install/uninstall_ubuntu_${VERSION}.sh" ;;
+  --purge) exec "$SCRIPT_DIR/install/uninstall_ubuntu_${VERSION}.sh" --purge-packages ;;
   *)
-    echo "Usage: $0 [--uninstall]" >&2
+    echo "Usage: $0 [--uninstall|--purge]" >&2
     exit 1
     ;;
 esac
-
-exec "$SCRIPT_DIR/install/$SCRIPT"

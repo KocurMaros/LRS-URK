@@ -59,6 +59,8 @@ if (( PURGE_PACKAGES )); then
     ros-jazzy-mavros libgz-sim8-dev rapidjson-dev libopencv-dev \
     libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
     gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl
+  sudo apt autoremove -y
 fi
 
-echo "Uninstall finished. Open a new terminal."
+echo "Uninstall finished. Hope you had a fun ride!\n"
+echo "-sanger23\n"
