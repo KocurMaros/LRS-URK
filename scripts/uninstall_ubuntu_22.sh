@@ -14,7 +14,7 @@ for option in "$@"; do
     --purge-packages) PURGE_PACKAGES=1 ;;
     -y|--yes) ASSUME_YES=1 ;;
     -h|--help)
-      echo "Usage: scripts/uninstall_ubuntu_24.sh [--purge-packages] [--yes]"
+      echo "Usage: scripts/uninstall_ubuntu_22.sh [--purge-packages] [--yes]"
       exit 0
       ;;
     *) echo "Unknown option: $option" >&2; exit 1 ;;
@@ -55,10 +55,11 @@ for SHELL_FILE in "$HOME/.profile" "$HOME/.bashrc"; do
 done
 
 if (( PURGE_PACKAGES )); then
-  sudo apt remove -y ros-jazzy-desktop ros-dev-tools ros-jazzy-ros-gz \
-    ros-jazzy-mavros libgz-sim8-dev rapidjson-dev libopencv-dev \
+  sudo apt remove -y ros-humble-desktop ros-dev-tools gz-harmonic ros-humble-ros-gzharmonic \
+    ros-humble-mavros libgz-sim8-dev rapidjson-dev libopencv-dev \
     libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
     gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl
+  sudo apt autoremove -y
 fi
 
 echo "Uninstall finished. Open a new terminal."

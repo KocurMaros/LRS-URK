@@ -3,7 +3,7 @@ set -euo pipefail
 
 ARDUPILOT_DIR="${ARDUPILOT_DIR:-$HOME/ardupilot}"
 ARDUPILOT_GAZEBO_DIR="${ARDUPILOT_GAZEBO_DIR:-$HOME/ardupilot_gazebo}"
-ROS_DISTRO=jazzy
+ROS_DISTRO=humble
 GZ_VERSION=harmonic
 LRS_URK_REMOTE=https://github.com/KocurMaros/LRS-URK.git
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -15,7 +15,7 @@ CHECK_ONLY=0
 case "${1:-}" in
   --check) CHECK_ONLY=1 ;;
   -h|--help)
-    echo "Usage: scripts/install_ubuntu_24.sh [--check]"
+    echo "Usage: scripts/install_ubuntu_22.sh [--check]"
     exit 0
     ;;
   '') ;;
@@ -30,8 +30,8 @@ fail() { printf '\nERROR: %s\n' "$*" >&2; exit 1; }
 
 # shellcheck disable=SC1091
 source /etc/os-release
-[[ "${ID:-}" == ubuntu && "${VERSION_ID:-}" == 24.04 ]] || \
-  fail "This installer requires Ubuntu 24.04."
+[[ "${ID:-}" == ubuntu && "${VERSION_ID:-}" == 22.04 ]] || \
+  fail "This installer requires Ubuntu 22.04."
 
 log "Checking Git"
 if ! command -v git >/dev/null 2>&1; then
@@ -43,7 +43,7 @@ if ! GIT_TERMINAL_PROMPT=0 timeout 30 git ls-remote "$LRS_URK_REMOTE" HEAD >/dev
   fail "Git cannot access GitHub. Check your internet connection and GitHub configuration."
 fi
 if (( CHECK_ONLY )); then
-  echo "Ubuntu 24.04, Git, and GitHub access are OK."
+  echo "Ubuntu 22.04, Git, and GitHub access are OK."
   exit 0
 fi
 
@@ -58,12 +58,17 @@ fi
 
 log "Installing Ubuntu and ROS 2 prerequisites"
 sudo apt update
-sudo apt install -y locales software-properties-common curl ca-certificates git-lfs \
+sudo apt install -y locales software-properties-common curl ca-certificates git-lfs lsb-release gnupg \
   build-essential cmake pkg-config wget
 sudo locale-gen en_US en_US.UTF-8
 sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 export LANG=en_US.UTF-8
 sudo add-apt-repository -y universe
+
+log "Adding the Gazebo Harmonic repository"
+sudo curl -fsSL https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" |
+  sudo tee /etc/apt/sources.list.d/gazebo-stable.list >/dev/null
 
 if ! dpkg-query -W ros2-apt-source >/dev/null 2>&1; then
   ROS_APT_SOURCE_VERSION="$(
@@ -80,14 +85,14 @@ if ! dpkg-query -W ros2-apt-source >/dev/null 2>&1; then
 fi
 
 sudo apt update
-sudo apt install -y ros-jazzy-desktop ros-dev-tools ros-jazzy-ros-gz \
-  ros-jazzy-mavros libgz-sim8-dev rapidjson-dev libopencv-dev \
+sudo apt install -y ros-humble-desktop ros-dev-tools gz-harmonic ros-humble-ros-gzharmonic \
+  ros-humble-mavros libgz-sim8-dev rapidjson-dev libopencv-dev \
   libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
   gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl
 
 set +u
 # shellcheck disable=SC1091
-source /opt/ros/jazzy/setup.bash
+source /opt/ros/humble/setup.bash
 set -u
 
 log "Configuring rosdep"
@@ -111,7 +116,7 @@ git checkout Copter-4.7.0
 git submodule update --init --recursive
 Tools/environment_install/install-prereqs-ubuntu.sh -y
 
-# Ubuntu 24.04's ArduPilot helper creates this virtual environment.
+# Activate the ArduPilot virtual environment if its helper created one.
 if [[ -f "$HOME/venv-ardupilot/bin/activate" ]]; then
   set +u
   # shellcheck disable=SC1091
@@ -129,13 +134,13 @@ if [[ ! -d "$ARDUPILOT_GAZEBO_DIR/.git" ]]; then
 fi
 cd "$ARDUPILOT_GAZEBO_DIR"
 git checkout ros2
-rosdep install --from-paths . --ignore-src -r -y --rosdistro jazzy
+rosdep install --from-paths . --ignore-src -r -y --rosdistro humble
 GZ_VERSION=harmonic cmake -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
 GZ_VERSION=harmonic cmake --build build --parallel "$(nproc)"
 
 log "Installing MAVROS datasets and downloading LRS-URK Git LFS files"
 sudo bash -c \
-  'source /opt/ros/jazzy/setup.bash && ros2 run mavros install_geographiclib_datasets.sh'
+  'source /opt/ros/humble/setup.bash && ros2 run mavros install_geographiclib_datasets.sh'
 git lfs install
 git -C "$LRS_URK_DIR" lfs pull
 
@@ -153,7 +158,7 @@ rm -f "$TMP_BASHRC"
 cat >> "$BASHRC" <<EOF
 
 $ENV_START
-source /opt/ros/jazzy/setup.bash
+source /opt/ros/humble/setup.bash
 export ARDUPILOT_DIR="$ARDUPILOT_DIR"
 export ARDUPILOT_GAZEBO_DIR="$ARDUPILOT_GAZEBO_DIR"
 export LRS_URK_DIR="$LRS_URK_DIR"
