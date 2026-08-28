@@ -1337,12 +1337,11 @@
         <collision name='collision'>
           <laser_retro>0</laser_retro>
           <max_contacts>10</max_contacts>
-          <pose>0 0 0 0 0 1.5708</pose>
+          <pose>-0.073902 0.000064 -0.000062 0 0 1.5708</pose>
           <geometry>
-            <mesh>
-              <uri>model://fei_lrs_drone/drone_lowres.dae</uri>
-              <scale>1 1 1</scale>
-            </mesh>
+            <box>
+              <size>0.346686 0.154805 0.346562</size>
+            </box>
           </geometry>
           <surface>
             <friction>
