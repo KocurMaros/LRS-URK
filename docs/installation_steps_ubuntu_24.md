@@ -29,11 +29,6 @@ sudo apt install ros-jazzy-desktop ros-dev-tools
 source /opt/ros/jazzy/setup.bash
 ```
 
-Useful commands
-``` bash
-rosdep install --from-paths src --ignore-src -r -y #install deps
-colcon build --symlink-install
-```
 2. install gz-sim harmonic
 On Ubuntu 24 run
 ``` bash
@@ -48,9 +43,6 @@ git checkout Copter-4.7.0
 git submodule update --init --recursive
 Tools/environment_install/install-prereqs-ubuntu.sh -y
 
-. ~/.profile
-cd ~/ardupilot/ArduCopter
-sim_vehicle.py -w --console --map
 ```
 4. ardupilot gazebo
 ``` bash
@@ -59,6 +51,7 @@ sudo apt install libgz-sim8-dev rapidjson-dev
 sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl
 
 export GZ_VERSION=harmonic # or garden or ionic
+rosdep install
 sudo bash -c 'wget https://raw.githubusercontent.com/osrf/osrf-rosdep/master/gz/00-gazebo.list -O /etc/ros/rosdep/sources.list.d/00-gazebo.list'
 rosdep update
 rosdep resolve gz-harmonic # or gz-garden or gz-ionic
@@ -68,7 +61,13 @@ rosdep install --from-paths src --ignore-src -y
 echo 'export GZ_SIM_SYSTEM_PLUGIN_PATH=$HOME/ardupilot_gazebo/build:${GZ_SIM_SYSTEM_PLUGIN_PATH}' >> ~/.bashrc
 echo 'export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo/models:$HOME/ardupilot_gazebo/worlds:${GZ_SIM_RESOURCE_PATH}' >> ~/.bashrc
 
-#TODO: ADD CUSTOM WORLDS
+git clone https://github.com/ArduPilot/ardupilot_gazebo
+git checkout ros2
+cd ardupilot_gazebo
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
+make -j4
+
 ```
 5. install mavros
 ```bash
@@ -80,7 +79,7 @@ sudo bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && ros2 run mavros install_
 sudo apt update
 sudo apt install git-lfs
 git lfs install
-
+git clone https://github.com/ArduPilot/ardupilot_gazebo.git
 cd ~/LRS-URK
 git lfs pull
 ```
