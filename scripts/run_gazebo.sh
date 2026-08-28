@@ -26,4 +26,4 @@ export GZ_SIM_RESOURCE_PATH="$REPO_ROOT/models:${GZ_SIM_RESOURCE_PATH:-}"
 
 echo "gz sim version: $(gz sim --version | head -1)"
 echo "World: $REPO_ROOT/worlds/$WORLD"
-exec gz sim "$REPO_ROOT/worlds/$WORLD"
+exec gz sim -r -v 4 "$REPO_ROOT/worlds/$WORLD"
