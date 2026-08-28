@@ -946,7 +946,7 @@
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
     <model name='unit_box_3'>
-      <pose>6.4226400000000003 6.7887500000000003 0.5 0 0 0</pose>
+      <pose>6.65 6.68 1.48388 -1.5708 0 0.010066</pose>
       <link name='link'>
         <inertial>
           <mass>1</mass>
@@ -963,7 +963,7 @@
         <collision name='collision'>
           <geometry>
             <box>
-              <size>1.9508000000000001 1.6765099999999999 1.9494899999999999</size>
+              <size>0.939395 0.555051 0.670682</size>
             </box>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -983,7 +983,7 @@
         <visual name='visual'>
           <geometry>
             <box>
-              <size>1.9508000000000001 1.6765099999999999 1.9494899999999999</size>
+              <size>0.939395 0.555051 0.670682</size>
             </box>
           </geometry>
           <material>
@@ -1258,7 +1258,7 @@
       </link>
     </model>
     <model name='unit_box_3_clone_4'>
-      <pose>5.9255899999999997 5.3703799999999999 1.4838800000000001 -1.5708 0 0.010065999999999999</pose>
+      <pose>6.1 6.65 2.34249 -1.5708 0 0.010066</pose>
       <link name='link'>
         <inertial>
           <mass>1</mass>
