@@ -15,8 +15,13 @@ on `gz sim` with ArduPilot SITL via the
   (`fei_lrs_drone`, `hangar`) — trimmed to only what's actually referenced.
 - `mt_executor_demo/` — a ROS 2 C++ example of `MultiThreadedExecutor`;
   see its own [README](mt_executor_demo/README.md).
+- `tutorial/ros2_cheatsheet.md` — ROS 2 workspace layout, console commands, and getting a
+  topic from `ros2 topic echo` into your C++ node.
 - `scripts/` — launch scripts for each piece (`run_gazebo.sh`, `run_sitl.sh`,
   `run_mavros.sh`); see [Running the simulation](#running-the-simulation).
+- `exams/` — the semester's assignments: how the semester works, grading and deadlines
+  in [`exams/README.md`](exams/README.md), the assignments themselves in
+  [`exams/exam1/`](exams/exam1/) and [`exams/exam2/`](exams/exam2/).
 
 ## Prerequisites
 
