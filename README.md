@@ -15,6 +15,8 @@ on `gz sim` with ArduPilot SITL via the
   (`fei_lrs_drone`, `hangar`) — trimmed to only what's actually referenced.
 - `mt_executor_demo/` — a ROS 2 C++ example of `MultiThreadedExecutor`;
   see its own [README](mt_executor_demo/README.md).
+- `scripts/` — launch scripts for each piece (`run_gazebo.sh`, `run_sitl.sh`,
+  `run_mavros.sh`); see [Running the simulation](#running-the-simulation).
 
 ## Prerequisites
 
@@ -61,18 +63,23 @@ system paths when running plain Jetty.
 
 ## Running the simulation
 
-Point Gazebo at this repo's models, then launch either world:
+Three terminals, one script each:
 
 ```bash
-export GZ_SIM_RESOURCE_PATH=$(pwd)/models
-gz sim worlds/fei_lrs_gazebo.world
+# Terminal 1 — Gazebo. Defaults to fei_lrs_gazebo.world; pass a filename
+# from worlds/ to run the depth-camera variant instead.
+scripts/run_gazebo.sh
+scripts/run_gazebo.sh fei_lrs_gazebo_depth.world
+
+# Terminal 2 — ArduPilot SITL, bridged to whatever Gazebo instance is running.
+# ARDUPILOT_DIR defaults to $HOME/ardupilot; override if yours lives elsewhere.
+scripts/run_sitl.sh
+
+# Terminal 3 — MAVROS, bridged to SITL.
+scripts/run_mavros.sh
 ```
 
-In a second terminal, start ArduPilot SITL against it. The frame must stay
-`gazebo-iris` (it only selects default parameters — motor count, frame
-class/type) but `--model JSON` must be passed explicitly so SITL talks the
-JSON/FDM protocol the `ardupilot_gazebo` plugin expects, instead of the
-legacy protocol classic Gazebo's `ArduPilotPlugin` used:
+Under the hood, `run_sitl.sh` runs:
 
 ```bash
 cd ardupilot/ArduCopter
@@ -81,16 +88,14 @@ sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON \
   --console -l 48.15084570555732,17.072729745416016,150,0
 ```
 
-The `--add-param-file` is required: current `sim_vehicle.py` no longer
-auto-loads a frame's default param file once `--model` is overridden away
-from the frame name, so without it `FRAME_CLASS` stays `0` (undefined) and
-the vehicle refuses to arm ("Check frame class and type").
-
-Then, as before:
-
-```bash
-ros2 run mavros mavros_node --ros-args -p fcu_url:=udp://127.0.0.1:14551@14555
-```
+The frame must stay `gazebo-iris` (it only selects default parameters —
+motor count, frame class/type) but `--model JSON` must be passed explicitly
+so SITL talks the JSON/FDM protocol the `ardupilot_gazebo` plugin expects,
+instead of the legacy protocol classic Gazebo's `ArduPilotPlugin` used. The
+`--add-param-file` is required alongside it: current `sim_vehicle.py` no
+longer auto-loads a frame's default param file once `--model` is overridden
+away from the frame name, so without it `FRAME_CLASS` stays `0` (undefined)
+and the vehicle refuses to arm ("Check frame class and type").
 
 ## Notes on the migration from classic Gazebo
 
