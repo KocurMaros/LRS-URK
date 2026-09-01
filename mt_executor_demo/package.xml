@@ -10,7 +10,8 @@
 
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
-  <depend>geometry_msgs</depend>
+  <depend>std_srvs</depend>
+  <exec_depend>rclpy</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
