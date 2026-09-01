@@ -76,7 +76,7 @@ you below the threshold even if the raw score was fine. Plan for that.
 
 ## Flying the real drone
 
-From **week 4** you may start flying on the **real UAV** outdoors. This is not automatic — it
+From **week 4** to **week 12** you may start flying on the **real UAV** outdoors. This is not automatic — it
 is unlocked per student/team once **all** of the following are true:
 
 1. Your **Exam 1 is fully submitted** (all four sub-exams, code in the repository, documentation written).
