@@ -1,195 +1,221 @@
-# Find-and-follow a moving rover
+# Find-and-follow a moving rover (10 points)
 
-A fourth Assignment 2 option alongside the topics in [`README.md`](README.md): each drone finds,
-then follows, its own moving rover using only its down camera — never a known coordinate. Like
-the other topics, this extends the control node you already wrote for
-[Assignment 1](../assignment1/README.md) (`MavrosClient`, `SetpointStream`, `PositionController`,
-`HeadingPolicy`, the `MultiThreadedExecutor` + callback-group pattern) — reuse it, don't
-reinvent it. Confirm with your exercise teacher before committing to this topic; the rules
-shared by all Assignment 2 topics (threshold, documentation, git hygiene) in
-[`README.md`](README.md) apply here too.
+One of the four [Assignment 2](README.md) topics. **Deadline: end of week 12.** See
+[`../README.md`](../README.md) for the semester rules and [`README.md`](README.md) for the
+rules shared by all topics (threshold, documentation, git).
 
-## What already exists — read it before writing any code
+## What you are building
 
-`scripts/generate_precision_landing.py` generates `worlds/fei_lrs_precision_landing.world` from
-`worlds/fei_lrs_outdoor.world`. Running it also writes
-`models/aruco_rover_<N>/{model.sdf,model.config,materials/textures/aruco_<N>.png}`. Re-run it
-after any edit to the templates in that script — the world file itself is marked
-"GENERATED ... do not edit by hand."
+Two drones, each finding and then following its own moving ground rover using only its down
+camera — never a known coordinate. This extends the control node from
+[Assignment 1](../assignment1/README.md): same node, same MAVROS setpoints, same position
+controller, same `MultiThreadedExecutor`/callback-group pattern. What's new is a second vehicle
+running the same architecture side by side, and a perception input (the down camera) feeding a
+decision (search vs. track) back into the thing you already built.
 
-The generated world has, right now:
+Fly it in `worlds/fei_lrs_precision_landing.world`:
 
-- **Two independent drone/rover pairs**, not one:
-  - `drone_1` / `aruco_rover_1`, ArUco marker id **1**, ArduPilot SITL instance **0**,
-    `fdm_port_in` **9002**, `SYSID_THISMAV` **1**, spawned at `(-10, -10)`.
-  - `drone_2` / `aruco_rover_2`, marker id **2**, instance **1**, `fdm_port_in` **9012**,
-    `SYSID_THISMAV` **2**, spawned at `(10, -10)`.
-  - The pairing rule is **marker id == the drone's own `SYSID_THISMAV`**. Keep that rule; it is
-    how a drone knows which rover is *its* rover when more than one marker might be visible.
-- **One down-facing (nadir) camera per drone**, replacing the outdoor world's stereo pair.
-  Gazebo topic `drone_<N>/down_camera/image_raw`, 640x480, 60 deg horizontal FOV, 30 Hz. Its
-  mount pose is **not** simply "pointing straight down along the drone's -Z" by inspection —
-  work out the actual optical-frame convention from `down_camera_xml()` and the link pose
-  override in `build_drone()` in `scripts/generate_precision_landing.py`, and verify it
-  empirically (log a detection's estimated pose against a known ground-truth position) before
-  trusting any sign or axis in your pose math. This is exactly the kind of mistake
+```bash
+gz sim worlds/fei_lrs_precision_landing.world
+```
+
+That world already has, built in:
+
+- **Two drones**, `drone_1` and `drone_2`, each with a single down-facing (nadir) camera —
+  topic `drone_<N>/down_camera/image_raw`, 640x480, 60° horizontal FOV, 30 Hz — replacing the
+  outdoor world's stereo pair.
+- **Two rovers**, `aruco_rover_1` and `aruco_rover_2`, each driving a fixed circle out of the
+  box (no ROS 2 node needed for that part to move) and each carrying an ArUco marker
+  (`DICT_4X4_50`) on a white pad on top.
+- **The pairing rule: marker id == the matching drone's `SYSID_THISMAV`.** `drone_1`
+  (`SYSID_THISMAV` 1) is paired with marker id 1, `drone_2` (`SYSID_THISMAV` 2) with marker id
+  2. Keep that rule — it is how a drone tells its own rover apart from the other one if both
+  markers are ever visible.
+- **Two independent ArduPilot SITL FDM ports already wired into the world**: `drone_1` is
+  instance 0 (`fdm_port_in` 9002), `drone_2` is instance 1 (`fdm_port_in` 9012). Bring both up
+  with `sim_vehicle.py` the same way [Assignment 1](../assignment1/README.md) has you bring up
+  one, just twice, with `--instance`/`--sysid` set to match and each in its own working
+  directory (two `sim_vehicle.py` processes building the same ArduCopter binary at the same time
+  can race on the shared `ardupilot/build` directory — build once, or serialise the two builds,
+  before running both):
+
+  ```bash
+  # terminal 1 — drone_1
+  sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON \
+    --add-param-file=$ARDUPILOT_DIR/Tools/autotest/default_params/gazebo-iris.parm \
+    --instance 0 --sysid 1 --use-dir /tmp/ardupilot-drone1 \
+    -l 48.15135451,17.07361560,150,0
+
+  # terminal 2 — drone_2
+  sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON \
+    --add-param-file=$ARDUPILOT_DIR/Tools/autotest/default_params/gazebo-iris.parm \
+    --instance 1 --sysid 2 --use-dir /tmp/ardupilot-drone2 \
+    -l 48.15135451,17.07388440,150,0
+  ```
+
+  The `-l` home locations above are each drone's actual spawn point (`(-10,-10)` and
+  `(10,-10)` local ENU metres) reprojected from the world's own geodetic origin — they matter:
+  ArduPilot's SITL JSON backend has no idea where in the Gazebo world its model was placed, so
+  `-l` has to already account for it, or your local-frame math will be off by exactly that
+  offset. `--instance 0`/`1` automatically pick FDM ports 9002/9012 to match the world (base
+  port + 10 × instance) and give each vehicle its own non-colliding MAVLink UDP port
+  (14550/14560) for MAVROS to connect to later — that part of "get two vehicles running without
+  their ports colliding" is handled for you; getting two *MAVROS* instances talking to the right
+  one each, in the right ROS namespace, is part of the assignment.
+
+Everything else — MAVROS (x2), bridging the cameras and the rover's velocity-command topic into
+ROS 2, the ArUco detector, the search/track controller, and randomizing the rovers' motion — is
+what you build. See the specification below.
+
+## Specification
+
+### 1. Two vehicles, bridged into ROS 2 — 2.0 points
+
+- Two independent MAVROS instances, one per drone, each in its own ROS 2 namespace, each
+  connected to the matching SITL instance above.
+- Bridge both cameras' `image_raw` and `camera_info` topics with `ros_gz_bridge` (get the exact
+  `camera_info` topic name from `gz topic -l` on the running world — gz-sim's camera sensor
+  publishes it automatically, it is not declared anywhere you can just read).
+- Verify independently that both vehicles' telemetry is actually flowing before writing any
+  mission logic — `ros2 topic info <topic> --verbose` showing a real publisher, not just the
+  topic name appearing in `ros2 topic list`, which it will even with nothing publishing to it if
+  something else has already subscribed.
+
+**Accepted when:** `ros2 node list`/`ros2 topic list` show both drones' full MAVROS telemetry
+and both cameras' bridged image topics, simultaneously, from a single `gz sim` + two SITL + two
+MAVROS bring-up.
+
+### 2. Search and marker identification — 3.0 points
+
+- Each drone arms, takes off to a search altitude (your parameter), and searches for its own
+  marker with the down camera — `cv2.aruco`/`cv::aruco`, `DICT_4X4_50`, plus `cv_bridge` to get
+  from `sensor_msgs/msg/Image` to an OpenCV `Mat`.
+- **A real search, not a fly-to-a-known-coordinate.** You are not given the rover's position;
+  design a search pattern that covers the area it could plausibly be in and confirm the
+  requirement is met by actually detecting the marker, not by computing where the rover must be
+  from the circle it starts on.
+- **Confirm the marker id matches this drone's own `SYSID_THISMAV`** before treating a detection
+  as a target. A marker with the wrong id — the *other* rover's — must be ignored, not chased;
+  demonstrate this with both drones running at once.
+
+**Accepted when:** both drones, run together, each find their own marker and never react to the
+other one, from a search pattern that does not assume where the rover starts.
+
+### 3. From a detection to a world-frame position — 2.0 points
+
+- Turn a detected marker into a target position in the drone's own local ENU frame: camera
+  intrinsics (from `camera_info`, not hardcoded), the marker's physical size, and the camera's
+  mounting offset and orientation relative to the drone body.
+- **The down camera's mount pose is not simply "pointing straight down along -Z" by inspection.**
+  Work out the actual optical-frame convention and verify it empirically — log a detection's
+  estimated position against something you can check by eye in the simulator (e.g. the drone's
+  own reported altitude while hovering directly over a rover) before trusting any sign or axis
+  in your pose math. This is exactly the kind of mistake
   [`03_outdoor_gps_mission.md`](../assignment1/03_outdoor_gps_mission.md)'s ENU/NED warnings are
   about.
-- **Each rover** carries a 1.00 m white pad with a marker (`DICT_4X4_50`) on top. Read
-  `scripts/generate_precision_landing.py`'s own `PAD_SIZE`/`MARKER_SIZE` constants and
-  `generate_marker_png()` carefully before deciding what physical size to hand your pose
-  estimator — the size the plate is generated at and the size `cv2.aruco`'s detector actually
-  reports corners for are not automatically the same thing once a texture has a quiet-zone
-  margin baked into it, and using the wrong one silently scales every distance you compute. This
-  is exactly the sort of thing "verify it empirically" above is for.
-- **Rover motion, currently**: a fixed circle, driven by `gz-sim-velocity-control-system`'s
-  static `<initial_linear>`/`<initial_angular>`. This must change — see "Randomize the rover
-  motion" below.
-- **Ground-truth rover odometry** is published on `model/aruco_rover_<N>/odometry`. That topic
-  exists for your own debugging/validation, not for the follow controller to consume — the
-  point of this exercise is closed-loop visual tracking from the camera, and a solution that
-  quietly reads this topic instead has not done that.
-- **Nothing to run any of this in ROS 2 exists yet.** You are building the bring-up scripts and
-  bridge launch file, not finding a bug in ones that are already there.
-- `check_clearance()` in the generator script already validates that rover circles and drone
-  spawn points stay clear of the world's trees/bushes by at least 5 m. Keep whatever you change
-  passing that check (or extend it) — a rover that can drive into scenery will, and so can a
-  drone that searches too wide an area at too low an altitude (the trees have real canopy height
-  and radius; check both before picking a search pattern's extent).
+- Check what pose-estimation API your installed OpenCV actually has before using it — the old
+  `estimatePoseSingleMarkers` path is deprecated/removed in newer OpenCV, replaced by a
+  `solvePnP`-based approach.
+- **The marker's physical size is not automatically obvious from the model.** The rover carries
+  a 1 m white pad with a smaller printed marker on it — measure or derive what
+  `cv2.aruco`/`cv::aruco` actually reports corners for, not the pad size, and not necessarily the
+  marker's nominal printed size either if the texture has any extra margin baked in. Getting this
+  wrong silently scales every distance you compute; verify it the same way as the mount pose,
+  empirically.
 
-## The objective
+**Accepted when:** a detection's computed world position, logged against the drone's own known
+altitude while roughly overhead, is accurate to within about the size of the marker itself, not
+metres off.
 
-1. Each drone (both, independently — this should work with two SITL/MAVROS stacks running at
-   once) arms, takes off, and climbs to a safe search altitude.
-2. It **searches** for its own rover using the down camera — detect ArUco markers in the image,
-   read off the id, and confirm it matches this drone's `SYSID_THISMAV` before treating it as
-   the target. A marker with the wrong id (the *other* rover's) must be ignored, not chased.
-   Do not assume the rover's position is known in advance; this has to be a real detect, not a
-   fly-to-a-known-coordinate.
-3. Once confirmed, switch to **tracking**: hold a fixed altitude *above* the rover — a
-   configurable parameter, not a hardcoded number — and continuously reposition to stay above
-   it as it moves. **Never land.** There is no landing state in this exercise.
-4. If the marker is lost from view for longer than a short, configurable timeout, drop back into
-   a search behaviour instead of continuing to fly toward a stale last-known position.
+### 4. Tracking, and a lost/found cycle — 3.0 points
 
-## Randomize the rover motion
+- Once a marker is confirmed, hold a **configurable** altitude above the rover (a parameter, not
+  a hardcoded number) and continuously reposition to stay above it as it moves.
+- **Randomize each rover's motion** — out of the box it drives a fixed, precomputable circle,
+  which a controller could solve once and never actually react to. Give each rover a randomly
+  changing speed and yaw rate every few seconds instead (`gz-sim-velocity-control-system` takes
+  a live Twist command on a topic — find the topic name and message type empirically the same
+  way you found `camera_info`'s, do not assume; bridge it with `ros_gz_bridge`). Keep the speed
+  in the same order of magnitude as the fixed circle's — this is a small field, not a racetrack.
+- If the marker is lost from view for longer than a short, **configurable** timeout, drop back
+  into search instead of continuing toward a stale last-known position.
+- **Never land.** There is no landing state in this exercise; have a working abort path
+  (service or topic, matching whatever `~/abort` convention you already used in Assignment 1)
+  that brings the vehicle to a safe hold/RTL instead.
 
-A perfect circle is a solved problem — a controller could precompute it and never actually
-react to anything. Replace it with randomly changing speed and direction:
+**Accepted when:** with both rovers moving under randomized commands, both drones independently
+track their own rover, and you can demonstrate at least one genuine lost-then-reacquired cycle
+per drone — not staged, an actual gap long enough to trip your timeout.
 
-- `gz-sim-velocity-control-system` can take a live Twist command on a topic instead of only a
-  static `initial_linear`/`initial_angular` — check the Gazebo Harmonic docs for the plugin's
-  `<topic>` option and the exact message type, don't assume; confirm it empirically against a
-  running world (`gz topic -l` and friends) the same way you're being asked to confirm the
-  camera pose above. Bridge that topic with `ros_gz_bridge` the same way you'll bridge the
-  cameras.
-- Write a small node (Python is fine) that, per rover, publishes a new random forward speed and
-  yaw rate every few seconds. Keep the speed in the same order of magnitude as the fixed
-  circle's current speed — this is a small field, not a racetrack — and keep whatever bounds you
-  pick consistent with `check_clearance()`'s 5 m margins.
-- Decide, and document, whether you still need the static `initial_linear`/`initial_angular` in
-  `models/aruco_rover_<N>/model.sdf` as a starting value or whether your randomizer node should
-  own motion from t=0. Either is fine; be explicit about which.
+## Point staging
 
-## All the instruments you'll need
+The four sections above are also staged milestones — each one only pays out if the ones before
+it are demonstrated, per the [Assignment 2 rules](README.md#rules-common-to-all-topics):
 
-- **`ros_gz_bridge`** (or an equivalent `ros_gz` bridge config) for: both cameras'
-  `image_raw` topics, their matching `camera_info` topics (gz-sim's camera sensor publishes one
-  automatically — get the exact topic name from `gz topic -l` on the running world, don't guess
-  it), and the rover velocity-command topic(s) from the randomizer above.
-- **OpenCV's `cv2.aruco`**, `DICT_4X4_50` (matching `scripts/generate_precision_landing.py`), for
-  detection and pose estimation, plus **`cv_bridge`** to get from `sensor_msgs/msg/Image` to an
-  OpenCV `Mat`. Check what pose-estimation API is actually available in the installed OpenCV
-  version before writing to it — the old `estimatePoseSingleMarkers` path is deprecated/removed
-  in newer OpenCV and replaced with a `solvePnP`-based approach; `generate_precision_landing.py`
-  already has to branch on OpenCV version for marker generation, so expect the same here.
-- **Two independent SITL instances and two independent MAVROS instances**, one pair per drone,
-  each in its own namespace, each pointed at its own vehicle. The single-vehicle
-  `scripts/run_sitl.sh`/`scripts/run_mavros.sh` pattern only stands up one of each — you need a
-  multi-instance equivalent (matching `fdm_port_in` 9002/instance 0 and 9012/instance 1, and
-  each vehicle's own home location) and a multi-MAVROS launch or a parametrized
-  `run_mavros.sh`-style script per vehicle. Port collisions between the two MAVROS instances
-  (the 14550-family ports) are the classic way this half-works — pick and document distinct
-  ports per vehicle, and check whichever MAVROS namespace convention your installed MAVROS
-  version actually expects (verify with `ros2 topic info <topic> --verbose` that a topic you
-  expect to be publishing actually has a publisher — don't assume a namespace argument does what
-  you think it does).
-- **`gz sim` running `worlds/fei_lrs_precision_landing.world`**, with `GZ_SIM_RESOURCE_PATH`
-  including `models/` — same convention `scripts/run_gazebo.sh` already uses for the other
-  worlds.
-- **Your own Assignment 1 control-node architecture — reuse it, don't reinvent it.** The
-  `MultiThreadedExecutor` with separate callback groups for telemetry, the mission-tick state
-  machine, the setpoint publisher, and services; `MavrosClient` for MAVROS I/O; `SetpointStream`
-  for a steady-rate position+yaw publisher; `PositionController` for arrival logic — all of it
-  is yours already. Say clearly in your documentation if you decide a new package is actually
-  warranted instead of extending your existing one, and why.
+| Demonstrated | Points | % |
+|---|---|---|
+| §1 only | 2.0 | 20 % |
+| §1 + §2 (both drones find their own marker) | 5.0 | 50 % |
+| §1 + §2 + §3 (accurate world-frame position, not yet flown to) | 7.0 | 70 % |
+| All four (tracking, randomized motion, a real lost/found cycle) | 10.0 | 100 % |
 
-## State machine
+50 % is the pass mark for this topic on its own. The actual gate to sit the final test is on
+**Assignment 1 + Assignment 2 combined** (56 % of 30, ≥ 16.8 — see
+[`../README.md`](../README.md#grading)), not a per-topic minimum, so whether §1+§2 alone is
+enough depends on what you scored on Assignment 1.
 
-Adapt the state machine shape you already have, don't invent a fresh one:
+## Hints
 
-```
-INIT -> WAIT_FOR_FCU -> WAIT_FOR_TELEMETRY -> SET_GUIDED -> ARM -> TAKEOFF -> SEARCH -> TRACKING
-```
-
-with `TRACKING -> SEARCH` on a detection timeout, and an abort path (service or topic, matching
-whatever `~/abort` convention you already used in Assignment 1) that brings the vehicle to a
-safe hold/RTL — there is no `LAND` state to reach in normal operation.
+- **Get the search/detect pipeline working with one drone at a time before running both.**
+  Confirm one drone finds its own marker and ignores the other rover's, then bring the second
+  one up. Debugging two SITL/MAVROS stacks and your mission logic simultaneously is much harder
+  than either alone.
+- **`gz topic -l` and `gz topic -i -t <topic>` are your friends** for every "what's the exact
+  topic name and message type" question in this assignment — the down camera's `camera_info`,
+  the rover's velocity-command topic, all of it. Don't guess from documentation for a different
+  Gazebo version; check the running world.
+- **A fast search leg plus a slow vision pipeline is a bias, not just noise.** If your node reads
+  "current" telemetry at the moment it finishes processing a frame rather than at the moment the
+  frame was captured, and the drone is moving quickly, the position you compute for a detection
+  will be off by roughly (vehicle speed) × (pipeline latency) — consistently in the direction of
+  travel. Capping your search/track speed is a simpler fix than trying to time-synchronise two
+  topics that may not even share a clock (`ros_gz_bridge` topics carry Gazebo's own
+  simulation-clock timestamps; MAVROS's do not, unless you also bridge `/clock` and run every
+  node with `use_sim_time`).
+- **The rover model's wheels are cosmetic** — motion comes entirely from
+  `gz-sim-velocity-control-system` applying a body-frame twist, not from the wheel joints. A
+  four-wheeled platform with a single box collision and no rolling resistance is not
+  automatically stable at all speed/yaw-rate combinations. If a rover ever tips onto its side
+  (check its `orientation` on `model/aruco_rover_<N>/odometry` — that ground-truth topic exists
+  for exactly this kind of debugging, not for your follow controller to consume), its marker
+  stops facing the sky and no down-facing camera at any altitude will find it — that's a
+  known characteristic of this rover model, not a bug in your detector. Keep your randomizer's
+  speed/yaw-rate bounds modest and note it in your documentation if you hit it.
+- Keep vision processing and flight control in **separate callback groups** (see
+  [`mt_executor_demo`](../../mt_executor_demo/README.md)) — ArUco detection takes real
+  processing time per frame, and it must never stall your setpoint publisher.
+- **MAVProxy needs a real, interactive terminal.** If you ever script SITL bring-up for
+  automated testing rather than running it by hand, a backgrounded MAVProxy process with no
+  controlling TTY exits almost immediately (it reads commands from stdin) — this looks exactly
+  like "SITL never sends a heartbeat" and is not.
 
 ## Deliverables
 
-- Multi-instance SITL/MAVROS bring-up scripts.
-- A bridge launch file for both cameras' image + camera_info topics and the rover
-  velocity-command topic(s).
-- The ArUco detector + follow controller (one node handling both drones by namespace, or two —
-  your call, document which and why), built on your existing node architecture.
-- The rover-motion randomizer, and whatever edits to `scripts/generate_precision_landing.py` /
-  `models/aruco_rover_*/model.sdf` it needs — regenerate the world after editing the generator,
-  never hand-edit the generated `.world`/`.sdf` files directly.
-- A short doc explaining how to bring all of this up from a clean checkout: the world, both SITL
-  instances, both MAVROS instances, the bridge, the randomizer, and both follow nodes — in
-  order, with the actual commands.
-- State explicitly, in that doc: how you go from a single camera detection to a world-frame
-  target position (camera intrinsics, marker size, the camera's extrinsic offset from the drone
-  body you worked out above), your altitude-above-rover parameter and its default, your
-  detection-timeout value and what "lost" triggers, and any known limitations.
+- ROS 2 package(s) building with `colcon build`, extending your Assignment 1 control node to run
+  two independent instances (one per drone).
+- Your multi-vehicle bring-up (SITL ×2, MAVROS ×2, bridge) as scripts or a launch file, not just
+  commands you ran once and remember.
+- Documentation per [`README.md`](README.md#rules-common-to-all-topics): your camera
+  intrinsics/extrinsics/marker-size derivation and how you verified it, your
+  altitude-above-rover and detection-timeout parameters and their defaults, pros/cons, and a
+  diagram of the perception → decision → control data flow for one drone.
+- Rosbag or screen recording of both drones searching, tracking, and going through at least one
+  lost/found cycle each, at the same time.
 
-## Standards this repo already holds everything else to — apply them here too
+## Links
 
-- Every tunable (altitudes, timeouts, follow distance, randomizer speed bounds) is a declared,
-  documented ROS parameter, not a number buried in code.
-- State transitions are logged.
-- There is a working abort path, demonstrated, not just written.
-- **Verify by actually running it in `gz sim` and watching both drones find and follow their
-  rovers, including through a rover-lost/found cycle** — do not report this done from reading
-  the code. If something doesn't work, say so plainly along with what you think the cause is,
-  the same standard [`04_documentation_and_defence.md`](../assignment1/04_documentation_and_defence.md)
-  sets for the rest of your submission.
-
-## Tips and tricks
-
-- **The rover model's wheels are cosmetic** — motion comes entirely from
-  `gz-sim-velocity-control-system` applying a body-frame twist, not from the wheel joints.
-  A four-wheeled platform with a single box collision and no rolling resistance is not
-  automatically stable at all speed/yaw-rate combinations; if you see a rover tip onto its side
-  after running for a while (its marker then stops facing the camera at all, from any
-  altitude — check the rover's own `orientation` on `model/aruco_rover_<N>/odometry` if a drone
-  that flies right over its rover's last-known area never detects anything), that is a
-  known characteristic of this rover model, not a bug in your detector. Keep your randomizer's
-  speed/yaw-rate bounds modest and note the behaviour in your documentation if you hit it,
-  rather than chasing it as if it were your own code.
-- **Sim time vs. wall-clock time.** `ros_gz_bridge` topics carry Gazebo's own simulation-clock
-  timestamps; MAVROS's do not unless you also bridge `/clock` and run every node with
-  `use_sim_time`. Comparing the two directly (e.g. to time-match a camera frame against a pose
-  reading) will not do what you expect unless you either bridge the clock properly or design
-  around not needing to compare them.
-- **A fast search leg plus a slow vision pipeline is a bias, not just noise.** If your follow
-  node reads "current" telemetry at the moment it finishes processing a frame rather than at the
-  moment the frame was captured, and the drone is moving quickly, the position you compute for
-  a detection will be off by roughly (vehicle speed) x (pipeline latency) — consistently in the
-  direction of travel, not a random scatter. Capping your search/track speed is a simpler fix
-  than trying to time-synchronise two topics that may not even share a clock (see above).
-- **MAVProxy needs a real, interactive terminal.** If you ever script SITL bring-up for
-  automated testing rather than running it by hand in a terminal, a backgrounded MAVProxy
-  process with no controlling TTY will exit almost immediately (it reads commands from stdin)
-  — this looks exactly like "SITL never sends a heartbeat" and is not.
+- [`useful_links.md`](../assignment1/useful_links.md) — MAVROS/MAVLink references, general tooling
+- [`tutorial/ros2_cheatsheet.md`](../../tutorial/ros2_cheatsheet.md) — subscribers, QoS, callback groups
+- [`ros_gz` bridge](https://github.com/gazebosim/ros_gz) — `parameter_bridge` usage and the full gz ↔ ROS type table
+- [ArduPilot SITL — multiple vehicles](https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html) — `sim_vehicle.py` instance/sysid conventions
+- [OpenCV ArUco detection](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html)
