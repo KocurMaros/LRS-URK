@@ -368,7 +368,7 @@ visible in the log output within a second. Further reading:
 | Node hangs on a service call | `spin_until_future_complete` called from inside a callback. |
 | Drone ignores part of your setpoint | `type_mask` — read `ros2 interface show mavros_msgs/msg/PositionTarget`. |
 | Drone will not arm | Read the **SITL console**. It names the failing pre-arm check. |
-| Trajectory is mirrored or rotated 90° | ENU vs NED. See [`exams/exam1/useful_links.md`](../exams/exam1/useful_links.md#frames--the-thing-that-will-bite-you). |
+| Trajectory is mirrored or rotated 90° | ENU vs NED. See [`assignments/assignment1/useful_links.md`](../assignments/assignment1/useful_links.md#frames--the-thing-that-will-bite-you). |
 | Everything stutters | Single-threaded executor with a slow callback. See Section 4. |
 
-More links: [`exams/exam1/useful_links.md`](../exams/exam1/useful_links.md).
+More links: [`assignments/assignment1/useful_links.md`](../assignments/assignment1/useful_links.md).

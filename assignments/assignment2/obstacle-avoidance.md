@@ -1,6 +1,6 @@
 # Obstacle avoidance (10 points)
 
-One of the three [Exam 2](README.md) topics. **Deadline: end of week 12.** See
+One of the three [Assignment 2](README.md) topics. **Deadline: end of week 12.** See
 [`../README.md`](../README.md) for the semester rules and [`README.md`](README.md) for the
 rules shared by all three topics (threshold, documentation, git).
 
@@ -10,7 +10,7 @@ Your drone flies from point A to point B along a straight line. Somewhere along 
 there is an obstacle it did not know about when the mission started. You detect it from the
 depth camera, decide where to go instead, and fly around it — then carry on to B.
 
-This extends the control node from [Exam 1](../exam1/README.md): same node, same MAVROS
+This extends the control node from [Assignment 1](../assignment1/README.md): same node, same MAVROS
 setpoints, same position controller. What's new is a perception input (the point cloud) feeding
 a decision (replan) back into the thing you already built.
 
@@ -83,7 +83,7 @@ Turn "here is a cloud of points" into "there is an obstacle at (x, y, z), yes or
   discard clearly-noise readings, e.g. anything implausibly close).
 - Decide on an **obstacle threshold distance** — the point at which "something is ahead" becomes
   "stop and replan." Don't pick it arbitrarily: derive it from your cruise speed and the
-  distance you need to react and turn, the same way [E1.1](../exam1/01_map_and_path_planning.md)
+  distance you need to react and turn, the same way [A1.1](../assignment1/01_map_and_path_planning.md)
   derives its inflation radius from the drone's size plus a margin. Write the derivation down.
 - **Detection must be stable.** A single stray point should not trigger a replan, and a real
   obstacle should not need ten attempts to notice. A simple approach that works well: require
@@ -104,7 +104,7 @@ Once you know there's an obstacle, decide where to fly instead.
 
 - Generate a new target point that clears the obstacle by your safety margin.
 - **Check that the new point is actually free before you commit to it** — the same lesson as
-  the hangar's shelving racks in E1.1: a point that merely "looks clear" because nothing was
+  the hangar's shelving racks in A1.1: a point that merely "looks clear" because nothing was
   detected there yet is not the same as a point that has been verified clear. A rule like "step
   90° to the last known-clear side, by margin + obstacle radius" is enough; nothing here
   requires full 3D planning.
@@ -134,7 +134,7 @@ succeeds unattended and without a collision.
 ## Point staging
 
 The four sections above are also staged milestones — each one only pays out if the ones before
-it are demonstrated, per the [Exam 2 rules](README.md#rules-common-to-all-topics):
+it are demonstrated, per the [Assignment 2 rules](README.md#rules-common-to-all-topics):
 
 | Demonstrated | Points | % |
 |---|---|---|
@@ -143,9 +143,10 @@ it are demonstrated, per the [Exam 2 rules](README.md#rules-common-to-all-topics
 | §1 + §2 + §3 (verified replan point, not flown) | 7.5 | 75 % |
 | All four (flown, autonomous) | 10.0 | 100 % |
 
-50 % is the pass mark for this topic on its own (5.6/10 is the actual threshold to sit the
-final exam — see [`../README.md`](../README.md#grading) — so passing §1+§2 alone is not quite
-enough by itself).
+50 % is the pass mark for this topic on its own. The actual gate to sit the final test is on
+**Assignment 1 + Assignment 2 combined** (56 % of 30, ≥ 16.8 — see
+[`../README.md`](../README.md#grading)), not a per-topic minimum, so whether §1+§2 alone is
+enough depends on what you scored on Assignment 1.
 
 ## Hints
 
@@ -166,7 +167,7 @@ enough by itself).
 
 ## Deliverables
 
-- ROS 2 package(s) building with `colcon build`, extending your Exam 1 control node.
+- ROS 2 package(s) building with `colcon build`, extending your Assignment 1 control node.
 - The `ros_gz_bridge` command(s) needed, documented in your README.
 - Documentation per [`README.md`](README.md#rules-common-to-all-topics): your detection
   threshold and how you derived it, your replanning strategy, pros/cons, a diagram of the
@@ -175,7 +176,7 @@ enough by itself).
 
 ## Links
 
-- [`useful_links.md`](../exam1/useful_links.md) — MAVROS/MAVLink references, general tooling
+- [`useful_links.md`](../assignment1/useful_links.md) — MAVROS/MAVLink references, general tooling
 - [`tutorial/ros2_cheatsheet.md`](../../tutorial/ros2_cheatsheet.md) — subscribers, QoS, callback groups
 - [`ros_gz` bridge](https://github.com/gazebosim/ros_gz) — `parameter_bridge` usage and the full gz ↔ ROS type table
 - [PCL tutorials](https://pcl.readthedocs.io/projects/tutorials/en/latest/) — if you'd rather

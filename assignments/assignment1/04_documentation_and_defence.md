@@ -1,4 +1,4 @@
-# E1.4 — Documentation and defence (2 points)
+# A1.4 — Documentation and defence (2 points)
 
 The documentation is not a formality — it is where you show that you *chose* your solution
 rather than stumbled into it. It lives in your repository (Markdown or PDF) and is submitted
@@ -54,7 +54,7 @@ Markdown on GitHub), or Inkscape.
 
 ### 3. Defence — 0.5 points
 
-During the exercise in week 6 (or earlier, when a sub-exam is finished):
+During the exercise in week 6 (or earlier, when a sub-assignment is finished):
 
 - **Run the mission** from a clean checkout of your repository.
 - **Explain your code** — you will be asked about specific parts of it.

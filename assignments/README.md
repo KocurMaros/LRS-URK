@@ -1,25 +1,25 @@
-# Exams — how the semester works
+# Assignments — how the semester works
 
 > **Scope.** This document describes the **exercise (cvičenia)** part of the course only —
-> the two exams you work on during the semester, how they are graded, and how to get help.
+> the two assignments you work on during the semester, how they are graded, and how to get help.
 > The **lectures and the final test** are run by the course lecturer and are graded separately;
 > nothing on this page changes those rules.
 
 ## Overview
 
-During the semester you work on **two exams**. Both are practical, both are done on the
+During the semester you work on **two assignments**. Both are practical, both are done on the
 simulation stack in this repository (Gazebo Sim + ArduPilot SITL + MAVROS), and both are
 worth **20 points**.
 
 | | What | Points | Deadline | Where |
 |---|---|---|---|---|
-| **Exam 1** | Fixed for everyone — autonomous mission, indoor + outdoor | 20 | **end of week 6** | [`exam1/`](exam1/) |
-| **Exam 2** | You pick **one** of the offered topics | 10 | **end of week 12** (last exercise) | [`exam2/`](exam2/) |
+| **Assignment 1** | Fixed for everyone — autonomous mission, indoor + outdoor | 20 | **end of week 6** | [`assignment1/`](assignment1/) |
+| **Assignment 2** | You pick **one** of the offered topics | 10 | **end of week 12** (last exercise) | [`assignment2/`](assignment2/) |
 | **Test** | Short written test on the **lecture** material | 10 | second half of the semester | see below |
 | | **Total** | **40** | | |
 
-Exam 1 is split into **four sub-exams** (E1.1 – E1.4) that can be submitted and defended
-independently — see [`exam1/README.md`](exam1/README.md). Exam 2 is a single, smaller
+Assignment 1 is split into **four sub-assignments** (A1.1 – A1.4) that can be submitted and defended
+independently — see [`assignment1/README.md`](assignment1/README.md). Assignment 2 is a single, smaller
 assignment; you choose which one.
 
 The **test** covers the lecture material, not the exercises. It is written once in the second
@@ -30,40 +30,39 @@ how it is run — ask the lecturer about its content.
 
 | Week | What happens |
 |---|---|
-| 1 | Environment setup: `gz sim`, ArduPilot SITL, MAVROS, ROS 2 workspace. Exam 1 is assigned. |
-| 2 | Work on **E1.1** — map processing and path planning. |
-| 3 | Work on **E1.2** — mission control node, indoor flight in simulation. |
-| 4 | Work on **E1.3** — outdoor GPS/compass mission. **Earliest possible real-drone flight** (see below). |
-| 5 | Integration, consultations, **E1.4** documentation. |
-| 6 | **Exam 1 deadline.** Defence during the exercise. Exam 2 topics presented. |
-| 7 | Exam 2 topic selection — tell your exercise teacher which one you picked. |
-| 8 – 11 | Work on Exam 2, consultations. **Short test on the lecture material** in this period — date announced in advance. |
-| 12 | **Exam 2 deadline.** Defence during the last exercise. |
+| 1 | Environment setup: `gz sim`, ArduPilot SITL, MAVROS, ROS 2 workspace. Assignment 1 is assigned. |
+| 2 | Work on **A1.1** — map processing and path planning. |
+| 3 | Work on **A1.2** — mission control node, indoor flight in simulation. |
+| 4 | Work on **A1.3** — outdoor GPS/compass mission. **Earliest possible real-drone flight** (see below). |
+| 5 | Integration, consultations, **A1.4** documentation. |
+| 6 | **Assignment 1 deadline.** Defence during the exercise. Assignment 2 topics presented. |
+| 7 | Assignment 2 topic selection — tell your exercise teacher which one you picked. |
+| 8 – 11 | Work on Assignment 2, consultations. **Short test on the lecture material** in this period — date announced in advance. |
+| 12 | **Assignment 2 deadline.** Defence during the last exercise. |
 
 ## Grading
 
 ### Points
 
-Each sub-exam / section has its points listed in its own file. You get points for what
+Each sub-assignment / section has its points listed in its own file. You get points for what
 **demonstrably works** — a feature that is written but not shown running during the defence
 does not score.
 
 ### Threshold for the final test
 
-To be allowed to sit the final exam you need **at least 56 % from *each* of the two exams
-separately**:
+To be allowed to sit the final test you need **at least 56 % of the combined assignment points** —
+Assignment 1 and Assignment 2 summed, not each individually:
 
-- **≥ 11.2 / 20 points from Exam 1**, and
-- **≥ 5.6 / 10 points from Exam 2**.
+- **≥ 16.8 / 30 points across Assignment 1 + Assignment 2 combined.**
 
-A good total is not enough — 20/20 from Exam 1 and 4/10 from Exam 2 does **not** qualify.
-Both thresholds must be met independently. The lecture test is not covered by this rule.
+For example, 20/20 from Assignment 1 and 0/10 from Assignment 2 (20/30 = 66.7 %) qualifies; so does 12/20
+and 6/10 (18/30 = 60 %). The lecture test is not covered by this rule.
 
 ### Late submission
 
-Every **started** week after the deadline costs **10 % of the points you earned** on that exam.
+Every **started** week after the deadline costs **10 % of the points you earned** on that assignment.
 
-| Submitted | Multiplier | Example: 16 points earned on Exam 1 |
+| Submitted | Multiplier | Example: 16 points earned on Assignment 1 |
 |---|---|---|
 | On time | × 1.00 | 16.0 |
 | 1 week late | × 0.90 | 14.4 |
@@ -79,11 +78,11 @@ you below the threshold even if the raw score was fine. Plan for that.
 From **week 4** to **week 12** you may start flying on the **real UAV** outdoors. This is not automatic — it
 is unlocked per student/team once **all** of the following are true:
 
-1. Your **Exam 1 is fully submitted** (all four sub-exams, code in the repository, documentation written).
+1. Your **Assignment 1 is fully submitted** (all four sub-assignments, code in the repository, documentation written).
 2. You passed a **consultation** with your exercise teacher, where you walk through your code
    and show the mission flying in simulation.
 3. You completed the **safety briefing** and your mission passes the pre-flight checklist in
-   [`exam1/03_outdoor_gps_mission.md`](exam1/03_outdoor_gps_mission.md).
+   [`assignment1/03_outdoor_gps_mission.md`](assignment1/03_outdoor_gps_mission.md).
 
 Real-drone flights always happen **with a teacher present** and with a **safety pilot holding
 an RC transmitter** who can take over at any moment. Never power a real vehicle without a
@@ -156,8 +155,8 @@ of guessing on Sunday.
 
 ## Useful links
 
-- **[`exam1/useful_links.md`](exam1/useful_links.md)** — environment setup, MAVROS/MAVLink
-  references, planning and GPS/compass material. Most of it is useful for Exam 2 too.
+- **[`assignment1/useful_links.md`](assignment1/useful_links.md)** — environment setup, MAVROS/MAVLink
+  references, planning and GPS/compass material. Most of it is useful for Assignment 2 too.
 - **[`tutorial/ros2_cheatsheet.md`](../tutorial/ros2_cheatsheet.md)** — ROS 2 workspace,
   console commands, and how to get a topic from `ros2 topic echo` into your C++ code.
 

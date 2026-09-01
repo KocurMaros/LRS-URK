@@ -1,7 +1,7 @@
-# E1.3 — Outdoor mission: GPS, compass and continuous trajectories (7 points)
+# A1.3 — Outdoor mission: GPS, compass and continuous trajectories (7 points)
 
 Everything so far ran indoors, where the simulator hands you a clean local position. Outdoors
-you have **GPS** and a **magnetic compass** instead, and this is the part of Exam 1 that also
+you have **GPS** and a **magnetic compass** instead, and this is the part of Assignment 1 that also
 runs on the **real drone** — so it has to survive real sensors: noise, a compass that is not
 aligned with your local X axis, and an origin that moves every time you power the vehicle.
 
@@ -56,7 +56,7 @@ up because it looks better in simulation.
 
 ### 1. GPS and compass handling — 1.5 points
 
-This is the foundation for everything else in this sub-exam.
+This is the foundation for everything else in this sub-assignment.
 
 - **Subscribe to the GPS fix** (`/mavros/global_position/global`, `sensor_msgs/msg/NavSatFix`)
   and **wait for a usable fix before arming.** Check the fix status and the satellite count —
@@ -119,7 +119,7 @@ bearing to the POI stays small (a few degrees), verifiable from your rosbag.
 
 ### 4. Figure-8 as a continuous trajectory — 2.0 points
 
-This is the core of the sub-exam. **No discrete waypoints.** Write a ROS 2 timer callback that,
+This is the core of the sub-assignment. **No discrete waypoints.** Write a ROS 2 timer callback that,
 on every tick, evaluates the parametric equations at the current time and publishes a fresh
 setpoint:
 
@@ -187,7 +187,7 @@ snap-backs.
 ## Doing this on the real drone
 
 From week 4 you may fly this mission outdoors on the real UAV, once the conditions in
-[`../README.md`](../README.md#flying-the-real-drone) are met — fully submitted Exam 1,
+[`../README.md`](../README.md#flying-the-real-drone) are met — fully submitted Assignment 1,
 a passed consultation, and the safety briefing.
 
 **A teacher is always present and a safety pilot always holds an RC transmitter that can take

@@ -1,6 +1,6 @@
-# E1.2 — Mission execution, indoor flight (6 points)
+# A1.2 — Mission execution, indoor flight (6 points)
 
-Take the path from [E1.1](01_map_and_path_planning.md) and actually fly it in the hangar
+Take the path from [A1.1](01_map_and_path_planning.md) and actually fly it in the hangar
 world, executing a task at each waypoint.
 
 Bring the simulation up in **three terminals — by hand**, as described in the
@@ -24,7 +24,7 @@ in `missions/` in this repository.
 | 6 | 2.81 | 8.15 | 1.50 | soft | yaw90 |
 | 7 | 13.60 | 1.50 | 2.00 | hard | land |
 
-**These are goal waypoints, not a flight path.** Your planner from E1.1 has to find the
+**These are goal waypoints, not a flight path.** Your planner from A1.1 has to find the
 collision-free route *between* consecutive rows. The drone flies the planned path; the tasks
 happen at the rows.
 
@@ -79,7 +79,7 @@ treated the same way.**
 If you apply a 10 cm acceptance radius to every point the planner produced, the drone stops at
 every one of them, because the only way to reliably end up inside a 10 cm ball is to
 decelerate into it. Forty path points become forty stop-and-go hops and a two-minute flight
-across a room. This is the single most common way this sub-exam goes wrong.
+across a room. This is the single most common way this sub-assignment goes wrong.
 
 Three things fix it, and you already have all three:
 
@@ -88,7 +88,7 @@ Three things fix it, and you already have all three:
    require the velocity to reach zero. Send the next setpoint as soon as you are near enough;
    `GUIDED` position targets are latched, so the vehicle transitions smoothly instead of
    braking.
-2. **Simplify the path** ([E1.1 §4](01_map_and_path_planning.md)). Fewer points, fewer chances
+2. **Simplify the path** ([A1.1 §4](01_map_and_path_planning.md)). Fewer points, fewer chances
    to hesitate. This is why that section is worth a full point.
 3. **`soft` vs `hard` is the whole mechanism.** `soft` means fly through without settling.
    `hard` means stop and settle — and stopping is *correct* there, because the next thing that
@@ -140,14 +140,14 @@ The direction of travel for a segment from **p** to **q** is
 midway through it, and **unwrap the angle** — `atan2` jumps between `+π` and `-π`, and a yaw
 setpoint that jumps by `2π` makes the drone spin a full turn the wrong way.
 
-This is the same mechanism you need in [E1.3](03_outdoor_gps_mission.md) for tangent heading on
+This is the same mechanism you need in [A1.3](03_outdoor_gps_mission.md) for tangent heading on
 the figure-8. Write it once, in a form you can reuse.
 
-## Acceptance criteria for the whole sub-exam
+## Acceptance criteria for the whole sub-assignment
 
 - The mission runs **end to end, unattended**, from `ros2 run` to disarm after landing.
 - The drone does not collide with the hangar — **including the shelving racks**, which are
-  solid despite their see-through visual mesh (see [E1.1 §2](01_map_and_path_planning.md)).
+  solid despite their see-through visual mesh (see [A1.1 §2](01_map_and_path_planning.md)).
 - All tasks in the mission file are executed, in order.
 - Between waypoints the drone faces the direction it is flying, and it does not stop at every
   intermediate point of the planned path.

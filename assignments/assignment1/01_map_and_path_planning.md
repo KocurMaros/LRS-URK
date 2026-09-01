@@ -1,7 +1,7 @@
-# E1.1 — Map processing and path planning (5 points)
+# A1.1 — Map processing and path planning (5 points)
 
 Turn a 3D map of the hangar into something you can plan in, and find a collision-free path
-through it. Nothing flies in this sub-exam — the output is a path, and you can develop and
+through it. Nothing flies in this sub-assignment — the output is a path, and you can develop and
 test all of it without the simulator running.
 
 ## Specification
@@ -17,7 +17,7 @@ Load the 3D map and convert it into a representation you can query for "is this 
   directly over raw points is not going to finish in reasonable time.
 - **Stacked 2D layers are not accepted.** Planning on a set of horizontal slices and stitching
   them together is not 3D planning — it cannot represent an obstacle you have to fly *over* or
-  *under* on a diagonal, and it is exactly the shortcut this sub-exam exists to rule out. Your
+  *under* on a diagonal, and it is exactly the shortcut this sub-assignment exists to rule out. Your
   representation and your planner both work in three dimensions.
 
 **Accepted when:** you can load the map, print its bounding box and voxel count, and answer
@@ -79,7 +79,7 @@ defence — including at least one pair you have not tested before.
 
 The raw planner output is not a flight path. A grid search over 25 cm voxels turns a 10 m
 route into forty-odd points, most of them lying on a handful of straight lines. **This matters
-more than it looks**: in [E1.2](02_indoor_mission_execution.md) your controller has to decide
+more than it looks**: in [A1.2](02_indoor_mission_execution.md) your controller has to decide
 it has arrived at each point before moving to the next, so forty points means forty
 decelerations. The drone will crawl through the hangar in a series of hops. Simplification is
 what turns that into smooth flight, which is why it is worth as much as it is here.
@@ -118,7 +118,7 @@ shelf, so re-run your collision check on the simplified path.
 - Source code of the map loader, inflation and planner.
 - A way to run it standalone (a node, an executable, or a launch file) that takes a start and
   goal and prints/publishes the path.
-- Timing and point-count numbers for the documentation (E1.4).
+- Timing and point-count numbers for the documentation (A1.4).
 
 ## Links
 

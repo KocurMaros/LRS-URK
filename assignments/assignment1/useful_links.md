@@ -1,7 +1,7 @@
 # Useful links and commands
 
 Everything you need to operate the stack and look things up. Most of this is useful for
-Exam 2 as well. Bookmark the MAVROS plugin list and the MAVLink common message set — you will
+Assignment 2 as well. Bookmark the MAVROS plugin list and the MAVLink common message set — you will
 open them constantly.
 
 ---
@@ -181,7 +181,7 @@ check that failed. It is never a mystery, and guessing wastes an afternoon.
 - [GeographicLib](https://geographiclib.sourceforge.io/) — geodetic ↔ ECEF ↔ local ENU, done correctly
 - [`geographic_info` / `geodesy` ROS packages](https://github.com/ros-geographic-info/geographic_info)
 - [Local tangent plane coordinates](https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates) — the flat-Earth approximation and when it is valid
-- [Lemniscate of Gerono](https://en.wikipedia.org/wiki/Lemniscate_of_Gerono) — the figure-8 curve in E1.3
+- [Lemniscate of Gerono](https://en.wikipedia.org/wiki/Lemniscate_of_Gerono) — the figure-8 curve in A1.3
 - [`atan2`](https://en.wikipedia.org/wiki/Atan2) — and why you need to unwrap its output
 
 ## 9. Getting help

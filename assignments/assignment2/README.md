@@ -1,4 +1,4 @@
-# Exam 2 — Pick one topic (10 points)
+# Assignment 2 — Pick one topic (10 points)
 
 **Deadline: end of week 12** (the last exercise). See [`../README.md`](../README.md) for the
 semester rules, the late-submission penalty and the 56 % threshold.
@@ -12,8 +12,8 @@ semester rules, the late-submission penalty and the 56 % threshold.
 
 You choose **one** of the offered topics and build it. All options are worth the same
 **10 points** and all build on the control node you wrote for
-[Exam 1](../exam1/README.md) — you are extending your own work, not starting over. Exam 2 is
-deliberately smaller than Exam 1: it is one focused capability added to a system that already
+[Assignment 1](../assignment1/README.md) — you are extending your own work, not starting over. Assignment 2 is
+deliberately smaller than Assignment 1: it is one focused capability added to a system that already
 flies, not a second full project.
 
 Tell your exercise teacher which topic you picked **in week 7**. Changing your mind later is
@@ -43,14 +43,15 @@ These apply whichever topic you pick:
 
 1. **10 points**, split across the assignment's sections — the exact split is in each
    assignment's own file.
-2. **You need ≥ 5.6 points (56 %)** to be allowed to sit the final exam. This threshold is
-   separate from Exam 1's — see [`../README.md`](../README.md#grading).
+2. **Assignment 2 counts toward the same combined threshold as Assignment 1** — 56 % of Assignment 1 + Assignment 2
+   together (≥ 16.8 / 30) to be allowed to sit the final test. There is no separate per-assignment
+   minimum for Assignment 2 — see [`../README.md`](../README.md#grading).
 3. **Points are awarded for what demonstrably works** during the defence, on a clean checkout
    of your repository.
 4. **Later sections require the earlier ones.** You cannot score the advanced part of an
    assignment without the foundation it stands on.
 5. **Documentation is required** — same expectations as
-   [E1.4](../exam1/04_documentation_and_defence.md): what you chose, why, pros and cons, plus a
+   [A1.4](../assignment1/04_documentation_and_defence.md): what you chose, why, pros and cons, plus a
    solution diagram.
 6. **You must be able to explain everything you submit.** Team work is allowed; the defence is
    individual.
@@ -61,9 +62,9 @@ These apply whichever topic you pick:
 
 ## Links
 
-- Setup, MAVROS/MAVLink references and tooling: [`../exam1/useful_links.md`](../exam1/useful_links.md)
+- Setup, MAVROS/MAVLink references and tooling: [`../assignment1/useful_links.md`](../assignment1/useful_links.md)
 - ROS 2 workspace and topics: [`../../tutorial/ros2_cheatsheet.md`](../../tutorial/ros2_cheatsheet.md)
 - [`ros_gz` bridge](https://github.com/gazebosim/ros_gz) — needed for obstacle avoidance's point cloud
 
-Note that the **10-point test on the lecture material** is a separate thing from Exam 2, written
+Note that the **10-point test on the lecture material** is a separate thing from Assignment 2, written
 in the second half of the semester — see [`../README.md`](../README.md#overview).
