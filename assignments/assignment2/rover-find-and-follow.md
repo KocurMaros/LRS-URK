@@ -183,14 +183,15 @@ enough depends on what you scored on Assignment 1.
   simulation-clock timestamps; MAVROS's do not, unless you also bridge `/clock` and run every
   node with `use_sim_time`).
 - **The rover model's wheels are cosmetic** — motion comes entirely from
-  `gz-sim-velocity-control-system` applying a body-frame twist, not from the wheel joints. A
-  four-wheeled platform with a single box collision and no rolling resistance is not
-  automatically stable at all speed/yaw-rate combinations. If a rover ever tips onto its side
-  (check its `orientation` on `model/aruco_rover_<N>/odometry` — that ground-truth topic exists
-  for exactly this kind of debugging, not for your follow controller to consume), its marker
-  stops facing the sky and no down-facing camera at any altitude will find it — that's a
-  known characteristic of this rover model, not a bug in your detector. Keep your randomizer's
-  speed/yaw-rate bounds modest and note it in your documentation if you hit it.
+  `gz-sim-velocity-control-system` applying a body-frame twist, not from the wheel joints, so
+  nothing on the rover actually rolls. If you ever see a rover tip onto its side (check its
+  `orientation` on `model/aruco_rover_<N>/odometry` — that ground-truth topic exists for exactly
+  this kind of debugging, not for your follow controller to consume) its marker stops facing the
+  sky and no down-facing camera at any altitude will find it. The collision friction is already
+  tuned low enough (`mu = 1.0`, roughly rubber-on-concrete) that the baked-in circle alone runs
+  indefinitely without this happening — if you still hit it after changing the rover's motion
+  yourself, it is almost certainly your own commanded speed/yaw-rate combination asking the box
+  to turn faster than it can slip at that friction, not a pre-existing issue with the model.
 - Keep vision processing and flight control in **separate callback groups** (see
   [`mt_executor_demo`](../../mt_executor_demo/README.md)) — ArUco detection takes real
   processing time per frame, and it must never stall your setpoint publisher.

@@ -179,7 +179,15 @@ def rover_model_sdf(v: dict) -> str:
       </visual>
 
       <!-- Single box collision covering chassis + pad, so a drone can rest on
-           the pad surface at z = 0.315. -->
+           the pad surface at z = 0.315. mu = 1.0 (roughly rubber-on-concrete), not the 100
+           this briefly had: at mu = 100 the box's sliding corners cannot slip at all while
+           VelocityControl commands it to turn on the spot (the wheels are cosmetic, so nothing
+           here actually rolls), and the contact solver resolves the unsliding rotation as a
+           steadily growing roll instead -- measured driving the rover in nothing but its own
+           baked-in circle below: a monotonic climb from level to fully tipped over in about
+           25 s, with no randomizer, no ROS, nothing else involved. mu = 1.0 lets the corners
+           slip during a turn the way a real wheeled/tracked vehicle's contact patch would,
+           which stops the roll from ever building up in the first place. -->
       <collision name='collision'>
         <pose>0 0 0.19 0 0 0</pose>
         <geometry>
@@ -187,7 +195,7 @@ def rover_model_sdf(v: dict) -> str:
         </geometry>
         <surface>
           <friction>
-            <ode><mu>100</mu><mu2>50</mu2></ode>
+            <ode><mu>1.0</mu><mu2>1.0</mu2></ode>
           </friction>
         </surface>
       </collision>
