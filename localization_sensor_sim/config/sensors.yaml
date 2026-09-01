@@ -1,0 +1,25 @@
+sensor_simulator:
+  ros__parameters:
+    use_sim_time: true
+    random_seed: 42
+
+    gps_rate_hz: 5.0
+    gps_position_stddev: [0.6, 0.6, 0.9]
+    gps_outlier_min_m: 5.0
+    gps_outlier_max_m: 8.0
+    required_gps_outage_s: 15.0
+
+    vo_rate_hz: 30.0
+    vo_scale_stddev: 0.01
+    vo_initial_velocity_bias_stddev: 0.02
+    vo_velocity_bias_random_walk_stddev: 0.001
+    vo_velocity_noise_stddev: 0.03
+    vo_position_step_noise_stddev: 0.003
+    vo_initial_yaw_rate_bias_stddev: 0.0034906585
+    vo_yaw_bias_random_walk_stddev: 0.0001745329
+    vo_yaw_step_noise_stddev: 0.0005235988
+    vo_pose_position_noise_stddev: 0.01
+    vo_pose_yaw_noise_stddev: 0.0052359878
+    suggested_vo_outage_s: 3.0
+
+    imu_yaw_rate_variance: 0.000016
