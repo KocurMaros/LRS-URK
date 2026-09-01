@@ -11,8 +11,9 @@ on `gz sim` with ArduPilot SITL via the
   (stereo camera, IMU, ArduPilot flight controller bridge).
 - `worlds/fei_lrs_gazebo_depth.world` — same world, with the drone's camera
   swapped for a native `rgbd_camera` sensor (color + depth + point cloud).
-- `models/` — the mesh/material assets those two worlds depend on
-  (`fei_lrs_drone`, `hangar`) — trimmed to only what's actually referenced.
+- `models/` — the mesh/material assets those two worlds depend on. The
+  `fei_lrs_hangar` and `fei_lrs_racks` model directories contain generated
+  Harmonic-compatible SDF around the original `hangar` meshes.
 - `mt_executor_demo/` — a ROS 2 C++ example of `MultiThreadedExecutor`;
   see its own [README](mt_executor_demo/README.md).
 - `tutorial/ros2_cheatsheet.md` — ROS 2 workspace layout, console commands, and getting a
@@ -25,46 +26,39 @@ on `gz sim` with ArduPilot SITL via the
 
 ## Prerequisites
 
-- `gz sim` (Gazebo Sim). Tested against both **Jetty** (10.x, the plain
-  system install on Ubuntu 24.04) and **Harmonic** (8.x, ROS 2 Jazzy's
-  officially supported pairing — see the version note below).
-- The [ardupilot_gazebo](https://github.com/ArduPilot/ardupilot_gazebo)
-  plugin, built against whichever Gazebo version you're running and
-  discoverable via `GZ_SIM_SYSTEM_PLUGIN_PATH`.
-- ArduPilot SITL (`arducopter`), built with `./waf configure --board sitl && ./waf copter`.
-- ROS 2 (tested on Jazzy) if you want to build `mt_executor_demo` or bridge
-  Gazebo topics into ROS 2 with `ros_gz_bridge`.
+- Ubuntu 22.04 or Ubuntu 24.04.
+- An internet connection and Git, to clone this repository.
+- A normal user account with `sudo` access. Do not run the installer as root.
 
-### A note on Gazebo versions
+## Installation
 
-Per the [official compatibility table](https://gazebosim.org/docs/latest/ros_installation/),
-ROS 2 Jazzy only supports **Gazebo Harmonic** — Jetty is marked incompatible.
-If you `apt install ros-jazzy-ros-gz` on a machine that already has system
-Gazebo Jetty installed, it pulls in `ros-jazzy-gz-sim-vendor`, which
-**compiles and bundles its own separate copy of Harmonic** rather than
-reusing Jetty, and `/opt/ros/jazzy/setup.bash` quietly points `GZ_CONFIG_PATH`
-/`LD_LIBRARY_PATH` at it — so plain `gz sim` silently switches versions
-after sourcing ROS's setup script, even though `which gz`/`gz sim --version`
-can look unchanged depending on how you check.
-
-Both worlds in this repo, and the `ardupilot_gazebo` plugin, work fine
-against either version — they just need to be built and pointed at
-consistently. To build the plugin against the ROS-vendored Harmonic instead
-of system Jetty:
+Clone the repository and run the installer as your normal user:
 
 ```bash
-source /opt/ros/jazzy/setup.bash
-cd ardupilot_gazebo && mkdir build-harmonic && cd build-harmonic
-GZ_VERSION=harmonic cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-  -DCMAKE_INSTALL_PREFIX=<install-dir>
-cmake --build . -j$(nproc) && cmake --install .
+git clone https://github.com/KocurMaros/LRS-URK.git
+cd LRS-URK
+scripts/install.sh
 ```
 
-Then point `GZ_SIM_SYSTEM_PLUGIN_PATH` at
-`<install-dir>/lib/ardupilot_gazebo` when running under Harmonic
-(`GZ_CONFIG_PATH`/`LD_LIBRARY_PATH` as set by ROS's `setup.bash`), or at the
-Jetty build's plugin directory with those two variables unset/pointing at
-system paths when running plain Jetty.
+The script detects the supported Ubuntu version and installs the matching ROS
+2 distribution (Humble on 22.04 or Jazzy on 24.04), Gazebo Harmonic,
+ArduPilot SITL, `ardupilot_gazebo`, MAVROS, and the required dependencies. It
+also adds the required environment variables to `~/.bashrc`. Reboot after the
+installation finishes.
+
+To remove ArduPilot, `ardupilot_gazebo`, their virtual environment, and the
+shell configuration added by the installer, run:
+
+```bash
+scripts/install.sh --uninstall
+```
+
+To also remove the ROS, Gazebo, MAVROS, and related packages installed by the
+script, run:
+
+```bash
+scripts/install.sh --purge
+```
 
 ## Running the simulation
 
@@ -101,24 +95,3 @@ instead of the legacy protocol classic Gazebo's `ArduPilotPlugin` used. The
 longer auto-loads a frame's default param file once `--model` is overridden
 away from the frame name, so without it `FRAME_CLASS` stays `0` (undefined)
 and the vehicle refuses to arm ("Check frame class and type").
-
-## Notes on the migration from classic Gazebo
-
-- `libArduPilotPlugin.so` / `libLiftDragPlugin.so` (classic Gazebo plugins)
-  were replaced with `gz sim`'s native `ArduPilotPlugin` and
-  `gz-sim-lift-drag-system`.
-- The stereo `multicamera` sensor (driven by `libgazebo_ros_camera.so`, a
-  classic-Gazebo-only ROS bridge) was split into two native `camera`
-  sensors publishing directly over `gz-transport` — see `worlds/fei_lrs_gazebo.world`.
-  The depth variant uses a single native `rgbd_camera` sensor instead.
-- The hangar model's and the drone body's mesh **collision** geometry (kept
-  as detailed meshes for visuals) was replaced with axis-aligned bounding
-  boxes computed from each mesh's true geometry (node transforms included,
-  via `pyassimp`). On Jetty, some of the hangar `.dae` files have malformed
-  submeshes that crash `gz sim`'s DART/ODE mesh-collision path outright; on
-  Harmonic (the ROS-vendored `gz-sim8` build), mesh collision isn't
-  implemented for dartsim at all yet (`SDFFeatures.cc:332`), so any mesh
-  collision silently fails to be created — box collisions sidestep both.
-- World-level system plugins (`Physics`, `Sensors`, `UserCommands`,
-  `SceneBroadcaster`, `Imu`, `NavSat`) are declared explicitly, since `gz sim`
-  — unlike classic Gazebo — doesn't load them implicitly.
