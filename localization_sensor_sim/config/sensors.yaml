@@ -11,12 +11,12 @@ sensor_simulator:
 
     vo_rate_hz: 30.0
     vo_scale_stddev: 0.01
-    vo_initial_velocity_bias_stddev: 0.02
-    vo_velocity_bias_random_walk_stddev: 0.001
+    vo_initial_velocity_bias_stddev: 0.01
+    vo_velocity_bias_random_walk_stddev: 0.0005
     vo_velocity_noise_stddev: 0.03
     vo_position_step_noise_stddev: 0.003
-    vo_initial_yaw_rate_bias_stddev: 0.0034906585
-    vo_yaw_bias_random_walk_stddev: 0.0001745329
+    vo_initial_yaw_rate_bias_stddev: 0.0005
+    vo_yaw_bias_random_walk_stddev: 0.00003
     vo_yaw_step_noise_stddev: 0.0005235988
     vo_pose_position_noise_stddev: 0.01
     vo_pose_yaw_noise_stddev: 0.0052359878

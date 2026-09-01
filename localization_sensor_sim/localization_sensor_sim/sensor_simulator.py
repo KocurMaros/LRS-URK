@@ -97,15 +97,15 @@ class LocalizationSensorSimulator(Node):
         self.declare_parameter('vo_rate_hz', 30.0)
         self.declare_parameter('vo_scale_stddev', 0.01)
         self.declare_parameter(
-            'vo_initial_velocity_bias_stddev', 0.02)
+            'vo_initial_velocity_bias_stddev', 0.01)
         self.declare_parameter(
-            'vo_velocity_bias_random_walk_stddev', 0.001)
+            'vo_velocity_bias_random_walk_stddev', 0.0005)
         self.declare_parameter('vo_velocity_noise_stddev', 0.03)
         self.declare_parameter('vo_position_step_noise_stddev', 0.003)
         self.declare_parameter(
-            'vo_initial_yaw_rate_bias_stddev', math.radians(0.2))
+            'vo_initial_yaw_rate_bias_stddev', 0.0005)
         self.declare_parameter(
-            'vo_yaw_bias_random_walk_stddev', math.radians(0.01))
+            'vo_yaw_bias_random_walk_stddev', 0.00003)
         self.declare_parameter(
             'vo_yaw_step_noise_stddev', math.radians(0.03))
         self.declare_parameter('vo_pose_position_noise_stddev', 0.01)
