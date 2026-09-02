@@ -58,12 +58,17 @@ fi
 
 log "Installing Ubuntu and ROS 2 prerequisites"
 sudo apt update
-sudo apt install -y locales software-properties-common curl ca-certificates git-lfs \
+sudo apt install -y locales software-properties-common curl ca-certificates git-lfs lsb-release gnupg \
   build-essential cmake pkg-config wget
 sudo locale-gen en_US en_US.UTF-8
 sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 export LANG=en_US.UTF-8
 sudo add-apt-repository -y universe
+
+log "Adding the Gazebo Harmonic repository"
+sudo curl -fsSL https://packages.osrfoundation.org/gazebo.gpg -o /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" |
+  sudo tee /etc/apt/sources.list.d/gazebo-stable.list >/dev/null
 
 if ! dpkg-query -W ros2-apt-source >/dev/null 2>&1; then
   ROS_APT_SOURCE_VERSION="$(
