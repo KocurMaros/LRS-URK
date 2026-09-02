@@ -16,8 +16,13 @@ on `gz sim` with ArduPilot SITL via the
   Harmonic-compatible SDF around the original `hangar` meshes.
 - `mt_executor_demo/` — a ROS 2 C++ example of `MultiThreadedExecutor`;
   see its own [README](mt_executor_demo/README.md).
+- `tutorial/ros2_cheatsheet.md` — ROS 2 workspace layout, console commands, and getting a
+  topic from `ros2 topic echo` into your C++ node.
 - `scripts/` — launch scripts for each piece (`run_gazebo.sh`, `run_sitl.sh`,
   `run_mavros.sh`); see [Running the simulation](#running-the-simulation).
+- `assignments/` — the semester's assignments: how the semester works, grading and deadlines
+  in [`assignments/README.md`](assignments/README.md), the assignments themselves in
+  [`assignments/assignment1/`](assignments/assignment1/) and [`assignments/assignment2/`](assignments/assignment2/).
 
 ## Prerequisites
 
@@ -90,3 +95,25 @@ instead of the legacy protocol classic Gazebo's `ArduPilotPlugin` used. The
 longer auto-loads a frame's default param file once `--model` is overridden
 away from the frame name, so without it `FRAME_CLASS` stays `0` (undefined)
 and the vehicle refuses to arm ("Check frame class and type").
+
+## Notes on the migration from classic Gazebo
+
+- `libArduPilotPlugin.so` / `libLiftDragPlugin.so` (classic Gazebo plugins)
+  were replaced with `gz sim`'s native `ArduPilotPlugin` and
+  `gz-sim-lift-drag-system`.
+- The stereo `multicamera` sensor (driven by `libgazebo_ros_camera.so`, a
+  classic-Gazebo-only ROS bridge) was split into two native `camera`
+  sensors publishing directly over `gz-transport` — see `worlds/fei_lrs_gazebo.world`.
+  The depth variant uses a single native `rgbd_camera` sensor instead.
+- Harmonic's DART backend cannot use these Collada meshes as collision
+  geometry. `scripts/generate_harmonic_models.py` reads each native `Z_UP`
+  Collada node transform and creates a tight primitive box for every building
+  and rack member, while retaining the detailed meshes for rendering. Rerun
+  the script after changing a hangar mesh. This also avoids the axis conversion
+  bug that previously placed the hangar collisions below the floor.
+- The racks are a separate `fei_lrs_racks` model, exposed as
+  `warehouse_racks` in Gazebo's entity tree. Their per-member collisions let
+  boxes rest on the actual shelf boards instead of a coarse bounding volume.
+- World-level system plugins (`Physics`, `Sensors`, `UserCommands`,
+  `SceneBroadcaster`, `Imu`, `NavSat`) are declared explicitly, since `gz sim`
+  — unlike classic Gazebo — doesn't load them implicitly.
