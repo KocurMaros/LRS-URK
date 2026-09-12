@@ -1,0 +1,2018 @@
+<sdf version='1.9'>
+<!--
+  Outdoor field world georeferenced to 48°09'05.2"N 17°04'25.5"E
+  (48.15144444, 17.07375000), an open grass area near the FEI campus.
+  World origin (0,0) = the drone spawn point = that coordinate.
+  Ground is a flat 120x120m grass plane; ~67x79m of it is populated with
+  trees/bushes approximating an aerial photo of the real site (positions
+  are visually estimated from the photo, not surveyed).
+
+  ArduPilot SITL's home location is set independently via sim_vehicle.py's
+  -l flag (see scripts/run_sitl.sh), not by this file's <spherical_coordinates>.
+  Run SITL for this world with a matching home location, e.g.:
+    HOME_LOCATION=48.15144444,17.07375000,150,0 scripts/run_sitl.sh
+-->
+  <world name='fei_lrs_outdoor_world'>
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu">
+    </plugin>
+    <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat">
+    </plugin>
+    <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact">
+    </plugin>
+
+    <gui fullscreen="0">
+      <plugin filename="MinimalScene" name="3D View">
+        <gz-gui>
+          <title>3D View</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="string" key="state">docked</property>
+        </gz-gui>
+        <engine>ogre2</engine>
+        <scene>scene</scene>
+        <ambient_light>0.4 0.4 0.4</ambient_light>
+        <background_color>0.7 0.7 0.7</background_color>
+        <camera_pose>-50 -65 40 0 0.45 0.9</camera_pose>
+      </plugin>
+      <plugin filename="EntityContextMenuPlugin" name="Entity context menu">
+        <gz-gui>
+          <property key="state" type="string">floating</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="GzSceneManager" name="Scene Manager">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="InteractiveViewControl" name="Interactive view control">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="CameraTracking" name="Camera Tracking">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="WorldControl" name="World control">
+        <gz-gui>
+          <title>World control</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">72</property>
+          <property type="double" key="z">1</property>
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="left" target="left"/>
+            <line own="bottom" target="bottom"/>
+          </anchors>
+        </gz-gui>
+        <play_pause>true</play_pause>
+        <step>true</step>
+        <start_paused>false</start_paused>
+        <use_event>true</use_event>
+      </plugin>
+      <plugin filename="WorldStats" name="World stats">
+        <gz-gui>
+          <title>World stats</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">110</property>
+          <property type="double" key="width">290</property>
+          <property type="double" key="z">1</property>
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="right" target="right"/>
+            <line own="bottom" target="bottom"/>
+          </anchors>
+        </gz-gui>
+        <sim_time>true</sim_time>
+        <real_time>true</real_time>
+        <real_time_factor>true</real_time_factor>
+        <iterations>true</iterations>
+      </plugin>
+      <plugin filename="ComponentInspector" name="Component inspector">
+        <gz-gui>
+          <property type="string" key="state">docked</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="EntityTree" name="Entity tree">
+        <gz-gui>
+          <property type="string" key="state">docked</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="ImageDisplay" name="Left camera">
+        <gz-gui>
+          <title>Left camera</title>
+          <property key="state" type="string">floating</property>
+          <property type="double" key="width">350</property>
+          <property type="double" key="height">315</property>
+        </gz-gui>
+        <topic>fei_lrs_drone/stereo_camera/left/image_raw</topic>
+        <topic_picker>false</topic_picker>
+      </plugin>
+      <plugin filename="ImageDisplay" name="Right camera">
+        <gz-gui>
+          <title>Right camera</title>
+          <property key="state" type="string">floating</property>
+          <property type="double" key="width">350</property>
+          <property type="double" key="height">315</property>
+          <property type="double" key="x">360</property>
+        </gz-gui>
+        <topic>fei_lrs_drone/stereo_camera/right/image_raw</topic>
+        <topic_picker>false</topic_picker>
+      </plugin>
+    </gui>
+    <model name='ground_plane'>
+      <static>true</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>120 120</size>
+            </plane>
+          </geometry>
+          <surface>
+            <contact>
+              <collide_bitmask>65535</collide_bitmask>
+              <ode/>
+            </contact>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>120 120</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.05 0.20 0.05 1</ambient>
+            <diffuse>0.13 0.50 0.14 1</diffuse>
+            <specular>0.02 0.04 0.02 1</specular>
+          </material>
+        </visual>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <light name='sun' type='directional'>
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.800000012 0.800000012 0.800000012 1</diffuse>
+      <specular>0.200000003 0.200000003 0.200000003 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.90000000000000002</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.10000000000000001 -0.90000000000000002</direction>
+      <spot>
+        <inner_angle>0</inner_angle>
+        <outer_angle>0</outer_angle>
+        <falloff>0</falloff>
+      </spot>
+    </light>
+    <model name='tree_n1'>
+      <static>true</static>
+      <pose>-22.80 26.10 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.00 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.22</radius><length>4.00</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.50 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.50</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.00 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.38</radius><length>8.00</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_n2'>
+      <static>true</static>
+      <pose>-18.80 23.70 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.10 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.25</radius><length>4.20</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.88 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.80</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.34 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.54</radius><length>8.68</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_n3'>
+      <static>true</static>
+      <pose>-14.70 26.90 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 1.90 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.21</radius><length>3.80</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.18 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.30</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 3.74 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.26</radius><length>7.48</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_n4'>
+      <static>true</static>
+      <pose>-12.10 22.10 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.25 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.27</radius><length>4.50</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 6.30 0 0 0</pose>
+          <geometry>
+            <sphere><radius>3.00</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.65 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.65</radius><length>9.30</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_n5'>
+      <static>true</static>
+      <pose>-8.00 27.60 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.00 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.23</radius><length>4.00</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.56 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.60</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.08 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.43</radius><length>8.16</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_n6'>
+      <static>true</static>
+      <pose>-4.00 28.40 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.15 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.26</radius><length>4.30</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 6.04 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.90</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.47 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.59</radius><length>8.94</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_n7'>
+      <static>true</static>
+      <pose>-1.30 26.10 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 1.95 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.22</radius><length>3.90</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.34 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.40</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 3.87 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.32</radius><length>7.74</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_n8'>
+      <static>true</static>
+      <pose>6.70 26.90 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.05 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.24</radius><length>4.10</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.72 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.70</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.21 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.49</radius><length>8.42</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_n9'>
+      <static>true</static>
+      <pose>10.70 28.40 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.20 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.28</radius><length>4.40</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 6.26 0 0 0</pose>
+          <geometry>
+            <sphere><radius>3.10</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.68 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.71</radius><length>9.36</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_n10'>
+      <static>true</static>
+      <pose>14.70 24.50 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 1.85 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.20</radius><length>3.70</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.02 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.20</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 3.61 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.21</radius><length>7.22</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_n11'>
+      <static>true</static>
+      <pose>17.40 21.30 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.00 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.22</radius><length>4.00</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.50 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.50</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.00 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.38</radius><length>8.00</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_n12'>
+      <static>true</static>
+      <pose>25.50 26.90 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 1.75 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.18</radius><length>3.50</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 4.70 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.00</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 3.35 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.10</radius><length>6.70</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_mid1'>
+      <static>true</static>
+      <pose>-5.40 14.20 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 1.50 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.16</radius><length>3.00</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 4.08 0 0 0</pose>
+          <geometry>
+            <sphere><radius>1.80</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 2.94 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.99</radius><length>5.88</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_w1'>
+      <static>true</static>
+      <pose>-26.80 4.70 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 1.75 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.20</radius><length>3.50</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 4.82 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.20</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 3.51 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.21</radius><length>7.02</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_w2'>
+      <static>true</static>
+      <pose>-24.80 -1.60 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 1.60 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.18</radius><length>3.20</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 4.40 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.00</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 3.20 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.10</radius><length>6.40</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_big'>
+      <static>true</static>
+      <pose>-16.75 -23.70 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 3.00 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.63</radius><length>6.00</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 10.20 0 0 0</pose>
+          <geometry>
+            <sphere><radius>7.00</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 8.60 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>3.85</radius><length>17.20</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_bl1'>
+      <static>true</static>
+      <pose>-31.50 -33.20 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.00 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.23</radius><length>4.00</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.56 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.60</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.08 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.43</radius><length>8.16</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_bl2'>
+      <static>true</static>
+      <pose>-28.10 -39.00 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.10 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.25</radius><length>4.20</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.88 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.80</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.34 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.54</radius><length>8.68</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_bl3'>
+      <static>true</static>
+      <pose>-24.10 -31.60 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 1.90 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.22</radius><length>3.80</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.24 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.40</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 3.82 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.32</radius><length>7.64</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_bl4'>
+      <static>true</static>
+      <pose>-32.50 -39.00 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 1.80 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.20</radius><length>3.60</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 4.92 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.20</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 3.56 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.21</radius><length>7.12</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_bl5'>
+      <static>true</static>
+      <pose>-21.40 -39.00 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.00 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.22</radius><length>4.00</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.50 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.50</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.00 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.38</radius><length>8.00</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_br1'>
+      <static>true</static>
+      <pose>21.40 -23.70 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.00 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.23</radius><length>4.00</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.56 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.60</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.08 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.43</radius><length>8.16</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_br2'>
+      <static>true</static>
+      <pose>25.50 -31.60 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.15 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.26</radius><length>4.30</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 6.04 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.90</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.47 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.59</radius><length>8.94</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_br3'>
+      <static>true</static>
+      <pose>28.80 -39.00 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 1.85 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.21</radius><length>3.70</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.08 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.30</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 3.69 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.26</radius><length>7.38</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_br4'>
+      <static>true</static>
+      <pose>18.80 -37.10 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 2.05 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.24</radius><length>4.10</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.72 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.70</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 4.21 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.49</radius><length>8.42</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='tree_br5'>
+      <static>true</static>
+      <pose>24.10 -39.00 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='trunk'>
+          <pose>0 0 1.95 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.22</radius><length>3.90</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.25 0.15 0.06 1</ambient>
+            <diffuse>0.35 0.22 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+        <visual name='canopy'>
+          <pose>0 0 5.34 0 0 0</pose>
+          <geometry>
+            <sphere><radius>2.40</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 3.87 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>1.32</radius><length>7.74</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='bush1'>
+      <static>true</static>
+      <pose>-5.40 8.70 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='canopy'>
+          <pose>0 0 1.10 0 0 0</pose>
+          <geometry>
+            <sphere><radius>1.00</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 1.05 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.55</radius><length>2.10</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='bush2'>
+      <static>true</static>
+      <pose>-4.00 -18.20 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='canopy'>
+          <pose>0 0 1.04 0 0 0</pose>
+          <geometry>
+            <sphere><radius>0.90</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 0.97 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.50</radius><length>1.94</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='bush3'>
+      <static>true</static>
+      <pose>-1.30 -39.00 0 0 0 0</pose>
+      <link name='link'>
+        <visual name='canopy'>
+          <pose>0 0 0.88 0 0 0</pose>
+          <geometry>
+            <sphere><radius>0.80</radius></sphere>
+          </geometry>
+          <material>
+            <ambient>0.05 0.18 0.05 1</ambient>
+            <diffuse>0.10 0.45 0.12 1</diffuse>
+            <specular>0.02 0.05 0.02 1</specular>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <pose>0 0 0.84 0 0 0</pose>
+          <geometry>
+            <cylinder><radius>0.44</radius><length>1.68</length></cylinder>
+          </geometry>
+        </collision>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+    </model>
+    <model name='fei_lrs_drone'>
+      <link name='drone_body'>
+        <inertial>
+          <mass>1.165</mass>
+          <inertia>
+            <ixx>0.0080000000000000002</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.014999999999999999</iyy>
+            <iyz>0</iyz>
+            <izz>0.017000000000000001</izz>
+          </inertia>
+          <pose>0 0 0 0 0 0</pose>
+        </inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+        <gravity>true</gravity>
+        <visual name='visual'>
+          <pose>0 0 0 0 0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <uri>model://fei_lrs_drone/drone_lowres.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <transparency>0</transparency>
+          <cast_shadows>true</cast_shadows>
+          <material>
+            <shader type='pixel'>
+              <normal_map>__default__</normal_map>
+            </shader>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <collision name='collision'>
+          <laser_retro>0</laser_retro>
+          <max_contacts>10</max_contacts>
+          <pose>-0.000062 0.000064 0.073902 0 0 1.5708</pose>
+          <geometry>
+            <box>
+              <size>0.346562 0.346686 0.154805</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1000</mu>
+                <mu2>1000</mu2>
+                <fdir1>0 0 0</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
+              <torsional>
+                <coefficient>1</coefficient>
+                <patch_radius>0</patch_radius>
+                <surface_radius>0</surface_radius>
+                <use_patch_radius>true</use_patch_radius>
+                <ode>
+                  <slip>0</slip>
+                </ode>
+              </torsional>
+            </friction>
+            <bounce>
+              <restitution_coefficient>0</restitution_coefficient>
+              <threshold>1000000</threshold>
+            </bounce>
+            <contact>
+              <collide_without_contact>false</collide_without_contact>
+              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+              <collide_bitmask>1</collide_bitmask>
+              <ode>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.20000000000000001</soft_erp>
+                <kp>10000000000000</kp>
+                <kd>1</kd>
+                <max_vel>100</max_vel>
+                <min_depth>0.001</min_depth>
+              </ode>
+              <bullet>
+                <split_impulse>true</split_impulse>
+                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.20000000000000001</soft_erp>
+                <kp>10000000000000</kp>
+                <kd>1</kd>
+              </bullet>
+            </contact>
+          </surface>
+        </collision>
+      </link>
+      <link name='fei_lrs_drone/ground_truth/odometry_sensorgt_link'>
+        <pose>0 0 0 0 0 0</pose>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.0001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00020000000000000001</iyy>
+            <iyz>0</iyz>
+            <izz>0.00020000000000000001</izz>
+          </inertia>
+        </inertial>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+      <joint name='fei_lrs_drone/ground_truth/odometry_sensorgt_joint' type='revolute'>
+        <child>fei_lrs_drone/ground_truth/odometry_sensorgt_link</child>
+        <parent>drone_body</parent>
+        <axis>
+          <xyz expressed_in='__model__'>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+            <effort>0</effort>
+            <velocity>0</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>true</implicit_spring_damper>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.20000000000000001</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='fei_lrs_drone/imu_link'>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>1.0000000000000001e-05</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>2.0000000000000002e-05</iyy>
+            <iyz>0</iyz>
+            <izz>2.0000000000000002e-05</izz>
+          </inertia>
+        </inertial>
+        <sensor name='imu_sensor' type='imu'>
+          <pose>0 0 0 -3.1415899999999999 0 0</pose>
+          <always_on>true</always_on>
+          <update_rate>1000</update_rate>
+          <imu/>
+        </sensor>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+      <joint name='fei_lrs_drone/imu_joint' type='revolute'>
+        <child>fei_lrs_drone/imu_link</child>
+        <parent>drone_body</parent>
+        <axis>
+          <xyz expressed_in='__model__'>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+            <effort>0</effort>
+            <velocity>0</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>true</implicit_spring_damper>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.20000000000000001</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='fei_lrs_drone/stereo_cam_link'>
+        <gravity>false</gravity>
+        <pose>0.085000000000000006 0.050000000000000003 0.073499999999999996 0 0 0</pose>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>1.0000000000000001e-05</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>2.0000000000000002e-05</iyy>
+            <iyz>0</iyz>
+            <izz>2.0000000000000002e-05</izz>
+          </inertia>
+        </inertial>
+        <sensor name='stereo_camera_left' type='camera'>
+          <topic>fei_lrs_drone/stereo_camera/left/image_raw</topic>
+          <update_rate>30</update_rate>
+          <camera name='left'>
+            <horizontal_fov>1.39626</horizontal_fov>
+            <image>
+              <width>800</width>
+              <height>800</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.02</near>
+              <far>300</far>
+            </clip>
+            <noise>
+              <type>gaussian</type>
+              <mean>0</mean>
+              <stddev>0.007</stddev>
+            </noise>
+          </camera>
+          <always_on>1</always_on>
+          <visualize>true</visualize>
+        </sensor>
+        <sensor name='stereo_camera_right' type='camera'>
+          <pose>0 -0.1 0 0 0 0</pose>
+          <topic>fei_lrs_drone/stereo_camera/right/image_raw</topic>
+          <update_rate>30</update_rate>
+          <camera name='right'>
+            <horizontal_fov>1.39626</horizontal_fov>
+            <image>
+              <width>800</width>
+              <height>800</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.02</near>
+              <far>300</far>
+            </clip>
+            <noise>
+              <type>gaussian</type>
+              <mean>0</mean>
+              <stddev>0.007</stddev>
+            </noise>
+          </camera>
+          <always_on>1</always_on>
+          <visualize>true</visualize>
+        </sensor>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+      <joint name='JOINT_stereo_cam' type='fixed'>
+        <parent>drone_body</parent>
+        <child>fei_lrs_drone/stereo_cam_link</child>
+      </joint>
+      <link name='prop_0'>
+        <inertial>
+          <mass>0.0080000000000000002</mass>
+          <inertia>
+            <ixx>9.7499999999999998e-06</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00016670399999999999</iyy>
+            <iyz>0</iyz>
+            <izz>0.00016760399999999999</izz>
+          </inertia>
+          <pose>0 0 0 0 0 0</pose>
+        </inertial>
+        <pose>0.14934500000000001 -0.14907100000000001 0.035000000000000003 0 0 0</pose>
+        <visual name='visual'>
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://fei_lrs_drone/propeller.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <transparency>0</transparency>
+          <cast_shadows>true</cast_shadows>
+          <material>
+            <shader type='pixel'>
+              <normal_map>__default__</normal_map>
+            </shader>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+      <link name='prop_1'>
+        <inertial>
+          <mass>0.0080000000000000002</mass>
+          <inertia>
+            <ixx>9.7499999999999998e-06</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00016670399999999999</iyy>
+            <iyz>0</iyz>
+            <izz>0.00016760399999999999</izz>
+          </inertia>
+          <pose>0 0 0 0 0 0</pose>
+        </inertial>
+        <pose>-0.14934500000000001 0.14907100000000001 0.035000000000000003 0 0 0</pose>
+        <visual name='visual'>
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://fei_lrs_drone/propeller.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <transparency>0</transparency>
+          <cast_shadows>true</cast_shadows>
+          <material>
+            <shader type='pixel'>
+              <normal_map>__default__</normal_map>
+            </shader>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+      <link name='prop_2'>
+        <inertial>
+          <mass>0.0080000000000000002</mass>
+          <inertia>
+            <ixx>9.7499999999999998e-06</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00016670399999999999</iyy>
+            <iyz>0</iyz>
+            <izz>0.00016760399999999999</izz>
+          </inertia>
+          <pose>0 0 0 0 0 0</pose>
+        </inertial>
+        <pose>0.14934500000000001 0.14907100000000001 0.035000000000000003 0 0 0</pose>
+        <visual name='visual'>
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://fei_lrs_drone/propeller.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <transparency>0</transparency>
+          <cast_shadows>true</cast_shadows>
+          <material>
+            <shader type='pixel'>
+              <normal_map>__default__</normal_map>
+            </shader>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+      <link name='prop_3'>
+        <inertial>
+          <mass>0.0080000000000000002</mass>
+          <inertia>
+            <ixx>9.7499999999999998e-06</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00016670399999999999</iyy>
+            <iyz>0</iyz>
+            <izz>0.00016760399999999999</izz>
+          </inertia>
+          <pose>0 0 0 0 0 0</pose>
+        </inertial>
+        <pose>-0.14934500000000001 -0.14907100000000001 0.035000000000000003 0 0 0</pose>
+        <visual name='visual_0'>
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://fei_lrs_drone/propeller.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <transparency>0</transparency>
+          <cast_shadows>true</cast_shadows>
+          <material>
+            <shader type='pixel'>
+              <normal_map>__default__</normal_map>
+            </shader>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
+        <self_collide>false</self_collide>
+        <enable_wind>false</enable_wind>
+        <kinematic>false</kinematic>
+      </link>
+      <joint name='JOINT_prop_0' type='revolute'>
+        <parent>drone_body</parent>
+        <child>prop_0</child>
+        <pose>0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+            <effort>-1</effort>
+            <velocity>-1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+            <damping>0.0040000000000000001</damping>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.20000000000000001</erp>
+            </limit>
+            <suspension>
+              <cfm>0</cfm>
+              <erp>0.20000000000000001</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='JOINT_prop_1' type='revolute'>
+        <parent>drone_body</parent>
+        <child>prop_1</child>
+        <pose>0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+            <effort>-1</effort>
+            <velocity>-1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+            <damping>0.0040000000000000001</damping>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.20000000000000001</erp>
+            </limit>
+            <suspension>
+              <cfm>0</cfm>
+              <erp>0.20000000000000001</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='JOINT_prop_2' type='revolute'>
+        <parent>drone_body</parent>
+        <child>prop_2</child>
+        <pose>0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+            <effort>-1</effort>
+            <velocity>-1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+            <damping>0.0040000000000000001</damping>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.20000000000000001</erp>
+            </limit>
+            <suspension>
+              <cfm>0</cfm>
+              <erp>0.20000000000000001</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='JOINT_prop_3' type='revolute'>
+        <parent>drone_body</parent>
+        <child>prop_3</child>
+        <pose>0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+            <effort>-1</effort>
+            <velocity>-1</velocity>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+            <damping>0.0040000000000000001</damping>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.20000000000000001</erp>
+            </limit>
+            <suspension>
+              <cfm>0</cfm>
+              <erp>0.20000000000000001</erp>
+            </suspension>
+          </ode>
+        </physics>
+      </joint>
+      <static>false</static>
+      <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
+        <a0>0.3</a0>
+        <alpha_stall>1.4</alpha_stall>
+        <cla>4.2500</cla>
+        <cda>0.10</cda>
+        <cma>0.00</cma>
+        <cla_stall>-0.025</cla_stall>
+        <cda_stall>0.0</cda_stall>
+        <cma_stall>0.0</cma_stall>
+        <area>0.002</area>
+        <air_density>1.2041</air_density>
+        <cp>0.084 0 0</cp>
+        <forward>0 1 0</forward>
+        <upward>0 0 1</upward>
+        <link_name>prop_0</link_name>
+      </plugin>
+      <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
+        <a0>0.3</a0>
+        <alpha_stall>1.4</alpha_stall>
+        <cla>4.2500</cla>
+        <cda>0.10</cda>
+        <cma>0.00</cma>
+        <cla_stall>-0.025</cla_stall>
+        <cda_stall>0.0</cda_stall>
+        <cma_stall>0.0</cma_stall>
+        <area>0.002</area>
+        <air_density>1.2041</air_density>
+        <cp>-0.084 0 0</cp>
+        <forward>0 -1 0</forward>
+        <upward>0 0 1</upward>
+        <link_name>prop_0</link_name>
+      </plugin>
+      <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
+        <a0>0.3</a0>
+        <alpha_stall>1.4</alpha_stall>
+        <cla>4.2500</cla>
+        <cda>0.10</cda>
+        <cma>0.00</cma>
+        <cla_stall>-0.025</cla_stall>
+        <cda_stall>0.0</cda_stall>
+        <cma_stall>0.0</cma_stall>
+        <area>0.002</area>
+        <air_density>1.2041</air_density>
+        <cp>0.084 0 0</cp>
+        <forward>0 1 0</forward>
+        <upward>0 0 1</upward>
+        <link_name>prop_1</link_name>
+      </plugin>
+      <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
+        <a0>0.3</a0>
+        <alpha_stall>1.4</alpha_stall>
+        <cla>4.2500</cla>
+        <cda>0.10</cda>
+        <cma>0.00</cma>
+        <cla_stall>-0.025</cla_stall>
+        <cda_stall>0.0</cda_stall>
+        <cma_stall>0.0</cma_stall>
+        <area>0.002</area>
+        <air_density>1.2041</air_density>
+        <cp>-0.084 0 0</cp>
+        <forward>0 -1 0</forward>
+        <upward>0 0 1</upward>
+        <link_name>prop_1</link_name>
+      </plugin>
+      <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
+        <a0>0.3</a0>
+        <alpha_stall>1.4</alpha_stall>
+        <cla>4.2500</cla>
+        <cda>0.10</cda>
+        <cma>0.00</cma>
+        <cla_stall>-0.025</cla_stall>
+        <cda_stall>0.0</cda_stall>
+        <cma_stall>0.0</cma_stall>
+        <area>0.002</area>
+        <air_density>1.2041</air_density>
+        <cp>0.084 0 0</cp>
+        <forward>0 -1 0</forward>
+        <upward>0 0 1</upward>
+        <link_name>prop_2</link_name>
+      </plugin>
+      <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
+        <a0>0.3</a0>
+        <alpha_stall>1.4</alpha_stall>
+        <cla>4.2500</cla>
+        <cda>0.10</cda>
+        <cma>0.00</cma>
+        <cla_stall>-0.025</cla_stall>
+        <cda_stall>0.0</cda_stall>
+        <cma_stall>0.0</cma_stall>
+        <area>0.002</area>
+        <air_density>1.2041</air_density>
+        <cp>-0.084 0 0</cp>
+        <forward>0 1 0</forward>
+        <upward>0 0 1</upward>
+        <link_name>prop_2</link_name>
+      </plugin>
+      <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
+        <a0>0.3</a0>
+        <alpha_stall>1.4</alpha_stall>
+        <cla>4.2500</cla>
+        <cda>0.10</cda>
+        <cma>0.00</cma>
+        <cla_stall>-0.025</cla_stall>
+        <cda_stall>0.0</cda_stall>
+        <cma_stall>0.0</cma_stall>
+        <area>0.002</area>
+        <air_density>1.2041</air_density>
+        <cp>0.084 0 0</cp>
+        <forward>0 -1 0</forward>
+        <upward>0 0 1</upward>
+        <link_name>prop_3</link_name>
+      </plugin>
+      <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
+        <a0>0.3</a0>
+        <alpha_stall>1.4</alpha_stall>
+        <cla>4.2500</cla>
+        <cda>0.10</cda>
+        <cma>0.00</cma>
+        <cla_stall>-0.025</cla_stall>
+        <cda_stall>0.0</cda_stall>
+        <cma_stall>0.0</cma_stall>
+        <area>0.002</area>
+        <air_density>1.2041</air_density>
+        <cp>-0.084 0 0</cp>
+        <forward>0 1 0</forward>
+        <upward>0 0 1</upward>
+        <link_name>prop_3</link_name>
+      </plugin>
+      <plugin filename="gz-sim-joint-state-publisher-system"
+        name="gz::sim::systems::JointStatePublisher">
+      </plugin>
+      <plugin filename="gz-sim-apply-joint-force-system"
+        name="gz::sim::systems::ApplyJointForce">
+        <joint_name>JOINT_prop_0</joint_name>
+      </plugin>
+      <plugin filename="gz-sim-apply-joint-force-system"
+        name="gz::sim::systems::ApplyJointForce">
+        <joint_name>JOINT_prop_1</joint_name>
+      </plugin>
+      <plugin filename="gz-sim-apply-joint-force-system"
+        name="gz::sim::systems::ApplyJointForce">
+        <joint_name>JOINT_prop_2</joint_name>
+      </plugin>
+      <plugin filename="gz-sim-apply-joint-force-system"
+        name="gz::sim::systems::ApplyJointForce">
+        <joint_name>JOINT_prop_3</joint_name>
+      </plugin>
+      <plugin name="ArduPilotPlugin" filename="ArduPilotPlugin">
+        <fdm_addr>127.0.0.1</fdm_addr>
+        <fdm_port_in>9002</fdm_port_in>
+        <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
+        <lock_step>1</lock_step>
+        <no_time_sync>1</no_time_sync>
+        <have_32_channels>0</have_32_channels>
+        <modelXYZToAirplaneXForwardZDown degrees="true">0 0 0 180 0 0</modelXYZToAirplaneXForwardZDown>
+        <gazeboXYZToNED degrees="true">0 0 0 180 0 0</gazeboXYZToNED>
+        <imuName>fei_lrs_drone/imu_link::imu_sensor</imuName>
+        <control channel='0'>
+          <jointName>JOINT_prop_0</jointName>
+          <useForce>1</useForce>
+          <multiplier>838</multiplier>
+          <offset>0</offset>
+          <type>VELOCITY</type>
+          <p_gain>0.20</p_gain>
+          <i_gain>0</i_gain>
+          <d_gain>0</d_gain>
+          <i_max>0</i_max>
+          <i_min>0</i_min>
+          <cmd_max>2.5</cmd_max>
+          <cmd_min>-2.5</cmd_min>
+          <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
+        </control>
+        <control channel='1'>
+          <jointName>JOINT_prop_1</jointName>
+          <useForce>1</useForce>
+          <multiplier>838</multiplier>
+          <offset>0</offset>
+          <type>VELOCITY</type>
+          <p_gain>0.20</p_gain>
+          <i_gain>0</i_gain>
+          <d_gain>0</d_gain>
+          <i_max>0</i_max>
+          <i_min>0</i_min>
+          <cmd_max>2.5</cmd_max>
+          <cmd_min>-2.5</cmd_min>
+          <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
+        </control>
+        <control channel='2'>
+          <jointName>JOINT_prop_2</jointName>
+          <useForce>1</useForce>
+          <multiplier>-838</multiplier>
+          <offset>0</offset>
+          <type>VELOCITY</type>
+          <p_gain>0.20</p_gain>
+          <i_gain>0</i_gain>
+          <d_gain>0</d_gain>
+          <i_max>0</i_max>
+          <i_min>0</i_min>
+          <cmd_max>2.5</cmd_max>
+          <cmd_min>-2.5</cmd_min>
+          <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
+        </control>
+        <control channel='3'>
+          <jointName>JOINT_prop_3</jointName>
+          <useForce>1</useForce>
+          <multiplier>-838</multiplier>
+          <offset>0</offset>
+          <type>VELOCITY</type>
+          <p_gain>0.20</p_gain>
+          <i_gain>0</i_gain>
+          <d_gain>0</d_gain>
+          <i_max>0</i_max>
+          <i_min>0</i_min>
+          <cmd_max>2.5</cmd_max>
+          <cmd_min>-2.5</cmd_min>
+          <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
+        </control>
+      </plugin>
+      <pose>0 0 0.005 0 0 0</pose>
+    </model>
+    <gravity>0 0 -9.8000000000000007</gravity>
+    <magnetic_field>6.0000000000000002e-06 2.3e-05 -4.1999999999999998e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <physics name='default_physics' default='false' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <scene>
+      <ambient>0.400000006 0.400000006 0.400000006 1</ambient>
+      <background>0.699999988 0.699999988 0.699999988 1</background>
+      <shadows>true</shadows>
+    </scene>
+    <wind/>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>48.15144444</latitude_deg>
+      <longitude_deg>17.07375000</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+  </world>
+</sdf>
