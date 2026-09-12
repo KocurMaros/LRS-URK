@@ -12,11 +12,13 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 
 add_executable(mt_executor_demo_node src/mt_executor_demo_node.cpp)
-ament_target_dependencies(mt_executor_demo_node rclcpp sensor_msgs geometry_msgs)
+ament_target_dependencies(mt_executor_demo_node rclcpp sensor_msgs std_srvs)
 
 install(TARGETS mt_executor_demo_node DESTINATION lib/${PROJECT_NAME})
+
+install(PROGRAMS src/mt_executor_demo_node.py DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
