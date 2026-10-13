@@ -112,7 +112,7 @@ sudo apt install ros-$ROS_DISTRO-rmw-cyclonedds-cpp
 `$ROS_DISTRO` is set by the ROS setup line the installer adds to `~/.bashrc` (`humble` on
 Ubuntu 22.04, `jazzy` on 24.04), so the same command works on both.
 
-Then, in **every terminal** you use to talk to the drone:
+Then set the environment and check that the drone is visible:
 
 ```bash
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
@@ -127,8 +127,20 @@ ros2 daemon stop; ros2 topic list
 - `ros2 daemon stop` throws away the ROS 2 CLI daemon started with the old settings; the next
   `ros2` command starts a fresh one. `ros2 topic list` should then show the drone's topics.
 
-The exports only apply to the terminal you run them in. Use terminals without them for the
-simulation.
+The two `export` lines only apply to the terminal you run them in. So that you don't have to
+repeat them in every terminal, append them to your `~/.bashrc` once:
+
+```bash
+cat >> ~/.bashrc <<'EOF'
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex>auto</ParticipantIndex><Peers><Peer Address="192.168.88.250"/></Peers></Discovery></Domain></CycloneDDS>'
+EOF
+```
+
+Every new terminal then picks them up — open a new one (or `source ~/.bashrc`) and run
+`ros2 daemon stop` once. From then on the simulation also runs on CycloneDDS; that is fine, as
+long as every ROS 2 process uses the same middleware. To go back to the default, delete the two
+lines from `~/.bashrc`.
 
 ## Notes on the migration from classic Gazebo
 

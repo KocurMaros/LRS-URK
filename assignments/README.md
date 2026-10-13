@@ -89,8 +89,7 @@ an RC transmitter** who can take over at any moment. Never power a real vehicle 
 teacher present.
 
 To talk to the real drone from your laptop, ROS 2 has to run on **CycloneDDS** with the drone as
-a discovery peer — the simulation setup alone is not enough. Do this in every terminal you use
-for the drone:
+a discovery peer — the simulation setup alone is not enough:
 
 ```bash
 sudo apt install ros-$ROS_DISTRO-rmw-cyclonedds-cpp   # once
@@ -99,7 +98,9 @@ export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex
 ros2 daemon stop; ros2 topic list
 ```
 
-What each line does is explained in the
+The two `export` lines only apply to the terminal you run them in — add them to your
+`~/.bashrc` so you don't have to repeat them in every terminal. What each line does, and how to
+add them to `~/.bashrc`, is in the
 [repository README](../README.md#connecting-to-the-real-drone).
 
 Flying the real drone brings no extra points — it is what you unlock by finishing early.
