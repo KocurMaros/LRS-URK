@@ -18,10 +18,10 @@ Fly it in the hangar world with the depth camera:
 `worlds/fei_lrs_gazebo_depth.world`. It carries a native `rgbd_camera` sensor on the drone
 (link `fei_lrs_drone/stereo_cam_link`, gz-transport base topic `fei_lrs_drone/stereo_camera`)
 publishing colour, depth and — already computed for you — a point cloud. Bring it up like the
-other worlds, by hand, per the [repository README](../../README.md):
+other worlds, per the [repository README](../../README.md#running-the-simulation):
 
 ```bash
-gz sim worlds/fei_lrs_gazebo_depth.world
+scripts/run_gazebo.sh fei_lrs_gazebo_depth.world
 ```
 
 ### Getting the point cloud into ROS 2

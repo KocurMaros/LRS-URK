@@ -96,6 +96,19 @@ longer auto-loads a frame's default param file once `--model` is overridden
 away from the frame name, so without it `FRAME_CLASS` stays `0` (undefined)
 and the vehicle refuses to arm ("Check frame class and type").
 
+## A note on Gazebo versions
+
+This repository uses **Gazebo Harmonic**. It works well with both ROS 2 Humble and Jazzy, and it
+is what `scripts/install.sh` installs on both Ubuntu versions, together with an
+`ardupilot_gazebo` plugin built against it. Gazebo **Jetty** is not supported by us — it should
+work in theory, but if you use it you are on your own.
+
+If you have more than one Gazebo version installed, `gz sim` can start a different one than the
+`ardupilot_gazebo` plugin was built for. That shows up as a plugin error or a silently missing
+drone, not as an obvious version message. `scripts/run_gazebo.sh` prints the version it starts
+(`gz sim version: ...`) — check that line first. If it is not Harmonic, make sure the
+`ardupilot_gazebo` build matching that version is on `GZ_SIM_SYSTEM_PLUGIN_PATH`.
+
 ## Connecting to the real drone
 
 When you fly outdoors on the real drone (see
@@ -125,7 +138,8 @@ ros2 daemon stop; ros2 topic list
   contacts it directly instead of relying on multicast discovery alone. `ParticipantIndex auto`
   lets several ROS 2 processes on your laptop run side by side.
 - `ros2 daemon stop` throws away the ROS 2 CLI daemon started with the old settings; the next
-  `ros2` command starts a fresh one. `ros2 topic list` should then show the drone's topics.
+  `ros2` command starts a fresh one. `ros2 topic list` should then show the drone's `/droneX/...`
+  topics — see [Topic names on the real drone](#topic-names-on-the-real-drone).
 
 The two `export` lines only apply to the terminal you run them in. So that you don't have to
 repeat them in every terminal, append them to your `~/.bashrc` once:
@@ -141,6 +155,22 @@ Every new terminal then picks them up — open a new one (or `source ~/.bashrc`)
 `ros2 daemon stop` once. From then on the simulation also runs on CycloneDDS; that is fine, as
 long as every ROS 2 process uses the same middleware. To go back to the default, delete the two
 lines from `~/.bashrc`.
+
+### Topic names on the real drone
+
+On the real drone, MAVROS does not run under `/mavros`. Every MAVROS topic and service is under
+`/droneX` instead, where X is the number of the drone you fly — your teacher tells you which one.
+For drone 10:
+
+| Simulation | Real drone 10 |
+|---|---|
+| `/mavros/state` | `/drone10/state` |
+| `/mavros/global_position/local` | `/drone10/global_position/local` |
+| `/mavros/setpoint_raw/local` | `/drone10/setpoint_raw/local` |
+| `/mavros/cmd/arming` | `/drone10/cmd/arming` |
+
+Don't hardcode `/mavros` in your nodes — make the prefix a parameter, so the same code runs in
+the simulation and on the drone.
 
 ## Notes on the migration from classic Gazebo
 

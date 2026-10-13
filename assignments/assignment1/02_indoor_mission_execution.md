@@ -3,11 +3,11 @@
 Take the path from [A1.1](01_map_and_path_planning.md) and actually fly it in the hangar
 world, executing a task at each waypoint.
 
-Bring the simulation up in **three terminals — by hand**, as described in the
-[repository README](../../README.md): `gz sim` with the hangar world, ArduPilot SITL, and
-MAVROS. There is no launch script that does it for you. Knowing which process is which, and
-what each argument means, is part of the assignment — when the drone will not arm you need to
-know which of the three to look at.
+Bring the simulation up in **three terminals, one script each**, as described in the
+[repository README](../../README.md): `scripts/run_gazebo.sh` with the hangar world,
+`scripts/run_sitl.sh` for ArduPilot SITL, and `scripts/run_mavros.sh` for MAVROS. Knowing which
+process is which, and what each argument in those scripts means, is part of the assignment —
+when the drone will not arm you need to know which of the three to look at.
 
 ## The mission
 

@@ -8,18 +8,19 @@ open them constantly.
 
 ## 1. Running the stack
 
-**Three terminals, brought up by hand** — the exact commands are in the
+**Three terminals, one script each** — the exact commands are in the
 [repository README](../../README.md), section *Running the simulation*:
 
-1. **Gazebo** — `gz sim` with the world from `worlds/` and `GZ_SIM_RESOURCE_PATH` pointing at
-   `models/`.
-2. **ArduPilot SITL** — `sim_vehicle.py`, with the arguments the README specifies. Read the
-   note about `--model JSON` and `--add-param-file`; without them the vehicle will not arm and
-   the error message does not point at the cause.
-3. **MAVROS** — `mavros_node` with the `fcu_url` matching SITL's output port.
+1. **Gazebo** — `scripts/run_gazebo.sh` runs `gz sim` with the world from `worlds/` and
+   `GZ_SIM_RESOURCE_PATH` pointing at `models/`.
+2. **ArduPilot SITL** — `scripts/run_sitl.sh` runs `sim_vehicle.py` with the arguments the
+   README specifies. Read the note about `--model JSON` and `--add-param-file`; without them the
+   vehicle will not arm and the error message does not point at the cause.
+3. **MAVROS** — `scripts/run_mavros.sh` runs `mavros_node` with the `fcu_url` matching SITL's
+   output port.
 
-There is no script that does this for you, on purpose. When something does not work you need to
-know which of the three processes to look at, and that only comes from starting them yourself.
+Each process gets its own terminal on purpose. When something does not work you need to know
+which of the three processes to look at — open the scripts and read what they run, they are short.
 
 Read the README's **"A note on Gazebo versions"** section before you debug a plugin that will
 not load — Jetty vs. Harmonic is the most common setup problem in this course, and the symptom

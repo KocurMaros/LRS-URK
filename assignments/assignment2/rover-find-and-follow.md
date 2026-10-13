@@ -16,7 +16,7 @@ decision (search vs. track) back into the thing you already built.
 Fly it in `worlds/fei_lrs_precision_landing.world`:
 
 ```bash
-gz sim worlds/fei_lrs_precision_landing.world
+scripts/run_gazebo.sh fei_lrs_precision_landing.world
 ```
 
 That world already has, built in:

@@ -103,6 +103,12 @@ The two `export` lines only apply to the terminal you run them in — add them t
 add them to `~/.bashrc`, is in the
 [repository README](../README.md#connecting-to-the-real-drone).
 
+On the real drone the MAVROS topics and services are **not under `/mavros`** but under
+`/droneX`, where X is the drone number your teacher gives you — for example
+`/mavros/global_position/local` becomes `/drone10/global_position/local`. Make the prefix a
+parameter in your node instead of hardcoding `/mavros`; see
+[Topic names on the real drone](../README.md#topic-names-on-the-real-drone).
+
 Flying the real drone brings no extra points — it is what you unlock by finishing early.
 Everything is graded from the simulation, so nobody is penalised for not getting there.
 
@@ -175,6 +181,7 @@ of guessing on Sunday.
 - **[`tutorial/ros2_cheatsheet.md`](../tutorial/ros2_cheatsheet.md)** — ROS 2 workspace,
   console commands, and how to get a topic from `ros2 topic echo` into your C++ code.
 
-For running the simulation itself, see the [repository README](../README.md). You bring the
-three terminals up **by hand** — Gazebo, ArduPilot SITL and MAVROS — there is no launch script
-that does it for you, and knowing what each command does is part of the point.
+For running the simulation itself, see the [repository README](../README.md#running-the-simulation).
+You bring up **three terminals** — Gazebo, ArduPilot SITL and MAVROS — each with its own script
+from `scripts/`. Read what each script runs: knowing which of the three processes to look at when
+something breaks is part of the point.
