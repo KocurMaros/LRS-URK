@@ -96,6 +96,40 @@ longer auto-loads a frame's default param file once `--model` is overridden
 away from the frame name, so without it `FRAME_CLASS` stays `0` (undefined)
 and the vehicle refuses to arm ("Check frame class and type").
 
+## Connecting to the real drone
+
+When you fly outdoors on the real drone (see
+[`assignments/README.md`](assignments/README.md#flying-the-real-drone) for when that is
+allowed), your laptop talks to the drone's ROS 2 over the network using CycloneDDS. Your laptop
+has to be on the drone's network, able to reach `192.168.88.250`.
+
+Install CycloneDDS once:
+
+```bash
+sudo apt install ros-$ROS_DISTRO-rmw-cyclonedds-cpp
+```
+
+`$ROS_DISTRO` is set by the ROS setup line the installer adds to `~/.bashrc` (`humble` on
+Ubuntu 22.04, `jazzy` on 24.04), so the same command works on both.
+
+Then, in **every terminal** you use to talk to the drone:
+
+```bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex>auto</ParticipantIndex><Peers><Peer Address="192.168.88.250"/></Peers></Discovery></Domain></CycloneDDS>'
+ros2 daemon stop; ros2 topic list
+```
+
+- `RMW_IMPLEMENTATION` switches ROS 2 in this terminal to CycloneDDS.
+- `CYCLONEDDS_URI` adds the drone (`192.168.88.250`) as a discovery peer, so your laptop
+  contacts it directly instead of relying on multicast discovery alone. `ParticipantIndex auto`
+  lets several ROS 2 processes on your laptop run side by side.
+- `ros2 daemon stop` throws away the ROS 2 CLI daemon started with the old settings; the next
+  `ros2` command starts a fresh one. `ros2 topic list` should then show the drone's topics.
+
+The exports only apply to the terminal you run them in. Use terminals without them for the
+simulation.
+
 ## Notes on the migration from classic Gazebo
 
 - `libArduPilotPlugin.so` / `libLiftDragPlugin.so` (classic Gazebo plugins)

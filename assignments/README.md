@@ -8,8 +8,8 @@
 ## Overview
 
 During the semester you work on **two assignments**. Both are practical, both are done on the
-simulation stack in this repository (Gazebo Sim + ArduPilot SITL + MAVROS), and both are
-worth **20 points**.
+simulation stack in this repository (Gazebo Sim + ArduPilot SITL + MAVROS). Assignment 1 is
+worth **20 points**, Assignment 2 **10 points**.
 
 | | What | Points | Deadline | Where |
 |---|---|---|---|---|
@@ -20,7 +20,7 @@ worth **20 points**.
 
 Assignment 1 is split into **four sub-assignments** (A1.1 – A1.4) that can be submitted and defended
 independently — see [`assignment1/README.md`](assignment1/README.md). Assignment 2 is a single, smaller
-assignment; you choose which one.
+assignment; you choose one of three topics — see [`assignment2/README.md`](assignment2/README.md).
 
 The **test** covers the lecture material, not the exercises. It is written once in the second
 half of the semester; the exact date is announced in advance. Nothing in this document changes
@@ -87,6 +87,20 @@ is unlocked per student/team once **all** of the following are true:
 Real-drone flights always happen **with a teacher present** and with a **safety pilot holding
 an RC transmitter** who can take over at any moment. Never power a real vehicle without a
 teacher present.
+
+To talk to the real drone from your laptop, ROS 2 has to run on **CycloneDDS** with the drone as
+a discovery peer — the simulation setup alone is not enough. Do this in every terminal you use
+for the drone:
+
+```bash
+sudo apt install ros-$ROS_DISTRO-rmw-cyclonedds-cpp   # once
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex>auto</ParticipantIndex><Peers><Peer Address="192.168.88.250"/></Peers></Discovery></Domain></CycloneDDS>'
+ros2 daemon stop; ros2 topic list
+```
+
+What each line does is explained in the
+[repository README](../README.md#connecting-to-the-real-drone).
 
 Flying the real drone brings no extra points — it is what you unlock by finishing early.
 Everything is graded from the simulation, so nobody is penalised for not getting there.

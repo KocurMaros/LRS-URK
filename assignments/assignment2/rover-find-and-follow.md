@@ -1,6 +1,6 @@
 # Find-and-follow a moving rover (10 points)
 
-One of the four [Assignment 2](README.md) topics. **Deadline: end of week 12.** See
+One of the three [Assignment 2](README.md) topics. **Deadline: end of week 12.** See
 [`../README.md`](../README.md) for the semester rules and [`README.md`](README.md) for the
 rules shared by all topics (threshold, documentation, git).
 
