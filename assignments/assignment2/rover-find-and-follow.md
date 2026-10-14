@@ -1,6 +1,6 @@
 # Find-and-follow a moving rover (10 points)
 
-One of the four [Assignment 2](README.md) topics. **Deadline: end of week 12.** See
+One of the three [Assignment 2](README.md) topics. **Deadline: end of week 12.** See
 [`../README.md`](../README.md) for the semester rules and [`README.md`](README.md) for the
 rules shared by all topics (threshold, documentation, git).
 
@@ -16,7 +16,7 @@ decision (search vs. track) back into the thing you already built.
 Fly it in `worlds/fei_lrs_precision_landing.world`:
 
 ```bash
-gz sim worlds/fei_lrs_precision_landing.world
+scripts/run_gazebo.sh fei_lrs_precision_landing.world
 ```
 
 That world already has, built in:
@@ -159,10 +159,10 @@ it are demonstrated, per the [Assignment 2 rules](README.md#rules-common-to-all-
 | §1 + §2 + §3 (accurate world-frame position, not yet flown to) | 7.0 | 70 % |
 | All four (tracking, randomized motion, a real lost/found cycle) | 10.0 | 100 % |
 
-50 % is the pass mark for this topic on its own. The actual gate to sit the final test is on
-**Assignment 1 + Assignment 2 combined** (56 % of 30, ≥ 16.8 — see
-[`../README.md`](../README.md#grading)), not a per-topic minimum, so whether §1+§2 alone is
-enough depends on what you scored on Assignment 1.
+There is **no separate Assignment 2 pass mark** — none of the milestones above is a minimum.
+The only gate is the one to sit the final test: **Assignment 1 + Assignment 2 combined**, 56 % of
+30, at least **16.8 / 30** — see [`../README.md`](../README.md#grading). How many points you need
+here therefore depends on what you scored on Assignment 1.
 
 ## Hints
 

@@ -8,8 +8,8 @@
 ## Overview
 
 During the semester you work on **two assignments**. Both are practical, both are done on the
-simulation stack in this repository (Gazebo Sim + ArduPilot SITL + MAVROS), and both are
-worth **20 points**.
+simulation stack in this repository (Gazebo Sim + ArduPilot SITL + MAVROS). Assignment 1 is
+worth **20 points**, Assignment 2 **10 points**.
 
 | | What | Points | Deadline | Where |
 |---|---|---|---|---|
@@ -20,7 +20,7 @@ worth **20 points**.
 
 Assignment 1 is split into **four sub-assignments** (A1.1 – A1.4) that can be submitted and defended
 independently — see [`assignment1/README.md`](assignment1/README.md). Assignment 2 is a single, smaller
-assignment; you choose which one.
+assignment; you choose one of three topics — see [`assignment2/README.md`](assignment2/README.md).
 
 The **test** covers the lecture material, not the exercises. It is written once in the second
 half of the semester; the exact date is announced in advance. Nothing in this document changes
@@ -87,6 +87,27 @@ is unlocked per student/team once **all** of the following are true:
 Real-drone flights always happen **with a teacher present** and with a **safety pilot holding
 an RC transmitter** who can take over at any moment. Never power a real vehicle without a
 teacher present.
+
+To talk to the real drone from your laptop, ROS 2 has to run on **CycloneDDS** with the drone as
+a discovery peer — the simulation setup alone is not enough:
+
+```bash
+sudo apt install ros-$ROS_DISTRO-rmw-cyclonedds-cpp   # once
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex>auto</ParticipantIndex><Peers><Peer Address="192.168.88.250"/></Peers></Discovery></Domain></CycloneDDS>'
+ros2 daemon stop; ros2 topic list
+```
+
+The two `export` lines only apply to the terminal you run them in — add them to your
+`~/.bashrc` so you don't have to repeat them in every terminal. What each line does, and how to
+add them to `~/.bashrc`, is in the
+[repository README](../README.md#connecting-to-the-real-drone).
+
+On the real drone the MAVROS topics and services are **not under `/mavros`** but under
+`/droneX`, where X is the drone number your teacher gives you — for example
+`/mavros/global_position/local` becomes `/drone10/global_position/local`. Make the prefix a
+parameter in your node instead of hardcoding `/mavros`; see
+[Topic names on the real drone](../README.md#topic-names-on-the-real-drone).
 
 Flying the real drone brings no extra points — it is what you unlock by finishing early.
 Everything is graded from the simulation, so nobody is penalised for not getting there.
@@ -160,6 +181,7 @@ of guessing on Sunday.
 - **[`tutorial/ros2_cheatsheet.md`](../tutorial/ros2_cheatsheet.md)** — ROS 2 workspace,
   console commands, and how to get a topic from `ros2 topic echo` into your C++ code.
 
-For running the simulation itself, see the [repository README](../README.md). You bring the
-three terminals up **by hand** — Gazebo, ArduPilot SITL and MAVROS — there is no launch script
-that does it for you, and knowing what each command does is part of the point.
+For running the simulation itself, see the [repository README](../README.md#running-the-simulation).
+You bring up **three terminals** — Gazebo, ArduPilot SITL and MAVROS — each with its own script
+from `scripts/`. Read what each script runs: knowing which of the three processes to look at when
+something breaks is part of the point.
