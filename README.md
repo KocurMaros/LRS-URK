@@ -114,7 +114,7 @@ drone, not as an obvious version message. `scripts/run_gazebo.sh` prints the ver
 When you fly outdoors on the real drone (see
 [`assignments/README.md`](assignments/README.md#flying-the-real-drone) for when that is
 allowed), your laptop talks to the drone's ROS 2 over the network using CycloneDDS. Your laptop
-has to be on the drone's network, able to reach `192.168.88.250`.
+has to be on the drone's network, able to reach `10.0.7.250`.
 
 Install CycloneDDS once:
 
@@ -147,7 +147,7 @@ repeat them in every terminal, append them to your `~/.bashrc` once:
 ```bash
 cat >> ~/.bashrc <<'EOF'
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex>auto</ParticipantIndex><Peers><Peer Address="192.168.88.250"/></Peers></Discovery></Domain></CycloneDDS>'
+export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex>auto</ParticipantIndex><Peers><Peer Address="10.0.7.250"/></Peers></Discovery></Domain></CycloneDDS>'
 EOF
 ```
 
