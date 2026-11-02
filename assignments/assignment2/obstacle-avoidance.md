@@ -68,13 +68,15 @@ With the world running, spawn a 0.6 × 0.6 × 3 m static box:
 ```bash
 gz service -s /world/fei_lrs_world/create \
   --reqtype gz.msgs.EntityFactory --reptype gz.msgs.Boolean --timeout 2000 \
-  --req "sdf: \"<sdf version='1.9'><model name='obstacle_1'><static>true</static><pose>X Y 1.5 0 0 0</pose><link name='link'><collision name='collision'><geometry><box><size>0.6 0.6 3</size></box></geometry></collision><visual name='visual'><geometry><box><size>0.6 0.6 3</size></box></geometry></visual></link></model></sdf>\""
+  --req "sdf: \"<sdf version='1.9'><model name='obstacle_1'><static>true</static><pose>X Y 1.5 0 0 0</pose><link name='link'><collision name='collision'><geometry><box><size>0.6 0.6 3</size></box></geometry></collision><visual name='visual'><geometry><box><size>0.6 0.6 3</size></box></geometry><material><ambient>1 0.4 0 1</ambient><diffuse>1 0.4 0 1</diffuse></material></visual></link></model></sdf>\""
 ```
 
 - Replace `X Y` with a position in **Gazebo world coordinates**, not your MAVROS local ENU
   frame. The easiest way to pick one: select the drone in the Gazebo GUI, read its pose in the
   Component Inspector, and offset from it along your flight line.
 - `z = 1.5` is half the box height, so the box stands on the floor.
+- The `<material>` makes the box orange so it is easy to spot; without it the box renders
+  almost black against the hangar floor.
 - For more boxes, run the command again with a different `model name`. A name that already
   exists is **not** spawned, even though the reply still says `data: true`; only the Gazebo
   terminal prints a warning (`Entity named [obstacle_1] already exists`).
