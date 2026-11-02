@@ -129,12 +129,12 @@ Then set the environment and check that the drone is visible:
 
 ```bash
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex>auto</ParticipantIndex><Peers><Peer Address="192.168.88.250"/></Peers></Discovery></Domain></CycloneDDS>'
+export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex>auto</ParticipantIndex><Peers><Peer Address="10.0.7.250"/></Peers></Discovery></Domain></CycloneDDS>'
 ros2 daemon stop; ros2 topic list
 ```
 
 - `RMW_IMPLEMENTATION` switches ROS 2 in this terminal to CycloneDDS.
-- `CYCLONEDDS_URI` adds the drone (`192.168.88.250`) as a discovery peer, so your laptop
+- `CYCLONEDDS_URI` adds the drone (`10.0.7.250`) as a discovery peer, so your laptop
   contacts it directly instead of relying on multicast discovery alone. `ParticipantIndex auto`
   lets several ROS 2 processes on your laptop run side by side.
 - `ros2 daemon stop` throws away the ROS 2 CLI daemon started with the old settings; the next

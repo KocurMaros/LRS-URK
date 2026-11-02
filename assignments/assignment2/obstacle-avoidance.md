@@ -56,6 +56,36 @@ in the world file, so `fei_lrs_drone` ends up prefixed twice. Check `ros2 topic 
 /fei_lrs_drone/stereo_camera/points --field header.frame_id` if RViz shows nothing and you
 suspect a frame mismatch — this is the value your own node's TF handling needs too.
 
+### Placing an obstacle
+
+The world has no obstacle on your A → B line; you place one yourself, and at the defence your
+teacher places one somewhere you have not tested. It has to be **static**, so it does not fall
+over, and **tall enough to cross your flight altitude**. A box inserted from the Gazebo GUI's
+shape toolbar is a 1 m cube that drops to the floor, below a typical flight corridor.
+
+With the world running, spawn a 0.6 × 0.6 × 3 m static box:
+
+```bash
+gz service -s /world/fei_lrs_world/create \
+  --reqtype gz.msgs.EntityFactory --reptype gz.msgs.Boolean --timeout 2000 \
+  --req "sdf: \"<sdf version='1.9'><model name='obstacle_1'><static>true</static><pose>X Y 1.5 0 0 0</pose><link name='link'><collision name='collision'><geometry><box><size>0.6 0.6 3</size></box></geometry></collision><visual name='visual'><geometry><box><size>0.6 0.6 3</size></box></geometry></visual></link></model></sdf>\""
+```
+
+- Replace `X Y` with a position in **Gazebo world coordinates**, not your MAVROS local ENU
+  frame. The easiest way to pick one: select the drone in the Gazebo GUI, read its pose in the
+  Component Inspector, and offset from it along your flight line.
+- `z = 1.5` is half the box height, so the box stands on the floor.
+- For more boxes, run the command again with a different `model name`; every name must be
+  unique.
+
+To try another placement, remove the box and spawn it again:
+
+```bash
+gz service -s /world/fei_lrs_world/remove \
+  --reqtype gz.msgs.Entity --reptype gz.msgs.Boolean --timeout 2000 \
+  --req 'name: "obstacle_1", type: MODEL'
+```
+
 ## Specification
 
 ### 1. Point cloud subscriber — 2.0 points
