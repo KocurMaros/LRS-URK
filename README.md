@@ -19,7 +19,9 @@ on `gz sim` with ArduPilot SITL via the
 - `tutorial/ros2_cheatsheet.md` — ROS 2 workspace layout, console commands, and getting a
   topic from `ros2 topic echo` into your C++ node.
 - `scripts/` — launch scripts for each piece (`run_gazebo.sh`, `run_sitl.sh`,
-  `run_mavros.sh`); see [Running the simulation](#running-the-simulation).
+  `run_mavros.sh`); see [Running the simulation](#running-the-simulation). Also
+  `spawn_obstacle.sh`, which places a box obstacle in the running world — see
+  [Placing an obstacle](assignments/assignment2/obstacle-avoidance.md#placing-an-obstacle).
 - `assignments/` — the semester's assignments: how the semester works, grading and deadlines
   in [`assignments/README.md`](assignments/README.md), the assignments themselves in
   [`assignments/assignment1/`](assignments/assignment1/) and [`assignments/assignment2/`](assignments/assignment2/).

@@ -63,31 +63,29 @@ teacher places one somewhere you have not tested. It has to be **static**, so it
 over, and **tall enough to cross your flight altitude**. A box inserted from the Gazebo GUI's
 shape toolbar is a 1 m cube that drops to the floor, below a typical flight corridor.
 
-With the world running, spawn a 0.6 × 0.6 × 3 m static box:
+With the world running, spawn a static orange box with `scripts/spawn_obstacle.sh`:
 
 ```bash
-gz service -s /world/fei_lrs_world/create \
-  --reqtype gz.msgs.EntityFactory --reptype gz.msgs.Boolean --timeout 2000 \
-  --req "sdf: \"<sdf version='1.9'><model name='obstacle_1'><static>true</static><pose>X Y 1.5 0 0 0</pose><link name='link'><collision name='collision'><geometry><box><size>0.6 0.6 3</size></box></geometry></collision><visual name='visual'><geometry><box><size>0.6 0.6 3</size></box></geometry><material><ambient>1 0.4 0 1</ambient><diffuse>1 0.4 0 1</diffuse></material></visual></link></model></sdf>\""
+scripts/spawn_obstacle.sh obstacle_1 16 7          # 0.6 × 0.6 × 3 m box at (16, 7)
+scripts/spawn_obstacle.sh wall_1 16 7 2 2.5        # 2 m wide, 2.5 m tall
+scripts/spawn_obstacle.sh --remove obstacle_1      # remove it again
 ```
 
-- Replace `X Y` with a position in **Gazebo world coordinates**, not your MAVROS local ENU
-  frame. The easiest way to pick one: select the drone in the Gazebo GUI, read its pose in the
-  Component Inspector, and offset from it along your flight line.
-- `z = 1.5` is half the box height, so the box stands on the floor.
-- The `<material>` makes the box orange so it is easy to spot; without it the box renders
-  almost black against the hangar floor.
-- For more boxes, run the command again with a different `model name`. A name that already
-  exists is **not** spawned, even though the reply still says `data: true`; only the Gazebo
-  terminal prints a warning (`Entity named [obstacle_1] already exists`).
+The arguments are `NAME X Y [WIDTH] [HEIGHT] [DEPTH] [YAW]`; `--help` lists them.
 
-To try another placement, remove the box and spawn it again:
+- `X Y` is the box centre in **Gazebo world coordinates**, not your MAVROS local ENU frame. The
+  drone spawns at (13, 7) with its depth camera looking along +X, so (16, 7) is 3 m in front of
+  it. To check a position, select a model in the Gazebo GUI and read its pose in the Component
+  Inspector.
+- `WIDTH` is the size along world Y, `DEPTH` along world X, `HEIGHT` upwards. The defaults are
+  0.6, 0.6 and 3 m, and the box always stands on the floor. Keep it taller than your flight
+  altitude, or the drone simply flies over it.
+- `YAW` rotates the box about Z, in radians (`1.5708` is 90°).
+- Every name must be unique, and the script refuses one that already exists. To move a box,
+  remove it and spawn it again.
 
-```bash
-gz service -s /world/fei_lrs_world/remove \
-  --reqtype gz.msgs.Entity --reptype gz.msgs.Boolean --timeout 2000 \
-  --req 'name: "obstacle_1", type: MODEL'
-```
+The script wraps gz-sim's `/world/<world>/create` and `/world/<world>/remove` services; read it
+if you would rather call them yourself.
 
 ## Specification
 
