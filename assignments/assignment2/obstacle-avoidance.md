@@ -67,11 +67,11 @@ With the world running, spawn a static orange box with `scripts/spawn_obstacle.s
 
 ```bash
 scripts/spawn_obstacle.sh obstacle_1 16 7          # 0.6 × 0.6 × 3 m box at (16, 7)
-scripts/spawn_obstacle.sh wall_1 16 7 2 2.5        # 2 m wide, 2.5 m tall
+scripts/spawn_obstacle.sh wall_1 16 7 2 0.6 2.5    # 2 m wide, 0.6 m deep, 2.5 m tall
 scripts/spawn_obstacle.sh --remove obstacle_1      # remove it again
 ```
 
-The arguments are `NAME X Y [WIDTH] [HEIGHT] [DEPTH] [YAW]`; `--help` lists them.
+The arguments are `NAME X Y [WIDTH] [DEPTH] [HEIGHT] [YAW]`; `--help` lists them.
 
 - `X Y` is the box centre in **Gazebo world coordinates**, not your MAVROS local ENU frame. The
   drone spawns at (13, 7) with its depth camera looking along +X, so (16, 7) is 3 m in front of

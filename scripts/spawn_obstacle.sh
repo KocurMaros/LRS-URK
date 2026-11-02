@@ -2,20 +2,20 @@
 # Spawn (or remove) a static, orange box obstacle in the running gz sim world.
 #
 # Usage:
-#   scripts/spawn_obstacle.sh NAME X Y [WIDTH] [HEIGHT] [DEPTH] [YAW]
+#   scripts/spawn_obstacle.sh NAME X Y [WIDTH] [DEPTH] [HEIGHT] [YAW]
 #   scripts/spawn_obstacle.sh --remove NAME
 #
 #   NAME    unique model name, e.g. obstacle_1
 #   X Y     position of the box centre in Gazebo world coordinates (metres),
 #           not your MAVROS local ENU frame
 #   WIDTH   size along the world Y axis, metres (default 0.6)
-#   HEIGHT  size along Z, metres (default 3.0); the box always stands on the floor
 #   DEPTH   size along the world X axis, metres (default 0.6)
+#   HEIGHT  size along Z, metres (default 3.0); the box always stands on the floor
 #   YAW     rotation about Z, radians (default 0)
 #
 # Examples:
 #   scripts/spawn_obstacle.sh obstacle_1 16 7            # 0.6 x 0.6 x 3 m box
-#   scripts/spawn_obstacle.sh wall_1 16 7 2 2.5          # 2 m wide, 2.5 m tall
+#   scripts/spawn_obstacle.sh wall_1 16 7 2 0.6 2.5      # 2 m wide, 0.6 m deep, 2.5 m tall
 #   scripts/spawn_obstacle.sh --remove obstacle_1
 #
 # The world is detected from the running simulation; set GZ_WORLD to choose one
@@ -75,13 +75,13 @@ fi
 
 [[ "$1" != -* && $# -ge 3 && $# -le 7 ]] || usage
 name="$1" x="$2" y="$3"
-width="${4:-0.6}" height="${5:-3.0}" depth="${6:-0.6}" yaw="${7:-0}"
+width="${4:-0.6}" depth="${5:-0.6}" height="${6:-3.0}" yaw="${7:-0}"
 
 [[ "$name" =~ ^[A-Za-z0-9_]+$ ]] || die "NAME may only contain letters, digits and underscores"
 is_number "$x" || die "X must be a number, got '$x'"
 is_number "$y" || die "Y must be a number, got '$y'"
 is_number "$yaw" || die "YAW must be a number, got '$yaw'"
-for pair in "WIDTH:$width" "HEIGHT:$height" "DEPTH:$depth"; do
+for pair in "WIDTH:$width" "DEPTH:$depth" "HEIGHT:$height"; do
   is_positive "${pair#*:}" || die "${pair%%:*} must be a positive number, got '${pair#*:}'"
 done
 
