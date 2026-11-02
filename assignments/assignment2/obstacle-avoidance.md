@@ -98,30 +98,54 @@ Turn "here is a cloud of points" into "there is an obstacle at (x, y, z), yes or
 **Accepted when:** you can place an obstacle in the drone's path and get a stable, correctly
 positioned detection, with no detections when the path is clear.
 
-### 3. Path replanning — 2.5 points
+### 3. Path replanning in 3D — 2.5 points
 
-Once you know there's an obstacle, decide where to fly instead.
+Once you know there's an obstacle, decide where to fly instead — with a real avoidance
+algorithm, in 3D. Choose one of these approaches, or something of comparable quality agreed
+with your teacher first:
 
-- Generate a new target point that clears the obstacle by your safety margin.
-- **Check that the new point is actually free before you commit to it** — the same lesson as
-  the hangar's shelving racks in A1.1: a point that merely "looks clear" because nothing was
-  detected there yet is not the same as a point that has been verified clear. A rule like "step
-  90° to the last known-clear side, by margin + obstacle radius" is enough; nothing here
-  requires full 3D planning.
-- A preprogrammed manoeuvre (step sideways, step up, back off) is an acceptable strategy — the
-  assignment does not require a general planner. More adaptive strategies (aiming for the
-  clearest direction in the cloud, going around vs. over depending on obstacle shape) are
-  welcome and are the way to make this section robust rather than merely working once.
-- This section can be demonstrated **without flying**: show the replanned point given a
-  recorded or a live cloud, and show it is collision-free.
+- **Map-based replanning:** keep a 3D map of what the camera has seen (a voxel grid or an octree;
+  your A1.1 one is a good start) and run a 3D planner on it — A\*, Theta\*, D\* Lite, RRT\* or
+  similar — again whenever the current path becomes blocked.
+- **Reactive 3D avoidance:** choose the next motion from the obstacles around the drone with a
+  method such as 3DVFH+ or a search over motion primitives, with enough memory to get back out of
+  a dead end.
 
-**Accepted when:** given an obstacle placed where you have not tested before, your node
-produces a specific, verified-clear (x, y, z) to fly to.
+A preprogrammed manoeuvre (step sideways, step up, back off) or a potential field with no way
+out of a local minimum is not enough for this section.
+
+- **Replan in 3D.** Going around and going over are both legal; when there is no way around, go
+  over. Minimum and maximum altitude are parameters. Whichever way the drone goes, it must not
+  collide with anything — including the roof, which is about 5.9 m high in the middle of the
+  hangar and 4.6 m at the side walls, and the roof beams, which hang down to 4.2 m.
+- **Check that the new path is actually free before you commit to it** — the same lesson as
+  the hangar's shelving racks in A1.1: space that merely "looks clear" because nothing was
+  detected there yet is not the same as space that has been verified clear. The camera only
+  looks forward, so fly nose-first and turn to look before moving sideways.
+- This section can be demonstrated **without flying**: show the replanned path given a
+  recorded or a live cloud (for a reactive method, its output stepped forward on the map), and
+  show it is collision-free.
+
+Test your algorithm on these four situations. At the defence your teacher sets up one of them,
+possibly with a different position or size. The examples use a route from A = (13.5, 1.5, 1.5)
+to B = (13.5, 11.0, 1.5) through the open part of the hangar; fly to A first, then place the
+obstacles, because some of them stand where the drone spawns.
+
+| Situation | What it forces | Example |
+|---|---|---|
+| **Pillar** | Around, either side — it nearly reaches the roof | `scripts/spawn_obstacle.sh pillar 13.5 6 0.6 0.6 5.5` |
+| **Low wall** | Over — it spans the hangar wall to wall | `scripts/spawn_obstacle.sh low_wall 8.75 5 0.3 19 2` |
+| **Wall with a gap** | Around, through the only opening | `scripts/spawn_obstacle.sh gap_wall 7.25 8 0.3 15.5 5.5` |
+| **U-trap** | Past a cup that opens toward A | `u_back 13.5 8 0.3 3.3 5.5`, `u_left 12 7 2 0.3 5.5`, `u_right 15 7 2 0.3 5.5` |
+
+**Accepted when:** for the situation your teacher sets up, placed where you have not tested
+before, your node produces a collision-free 3D path past it — around, through the gap, over, or
+out of the U-trap, as the situation requires — and you can explain how your algorithm works.
 
 ### 4. Flight with replanning — 2.5 points
 
 Put it together: fly the straight line from A to B, detect the obstacle in flight, replan, fly
-around it, and continue to B — autonomously, no manual intervention after start.
+past it, and continue to B — autonomously, no manual intervention after start.
 
 - You may assume the drone starts already at point A — you do not have to fly there first.
 - The path between A and B is a straight line; the obstacle sits on it.
@@ -140,7 +164,7 @@ it are demonstrated, per the [Assignment 2 rules](README.md#rules-common-to-all-
 |---|---|---|
 | §1 only | 2.0 | 20 % |
 | §1 + §2 (stable detection) | 5.0 | 50 % |
-| §1 + §2 + §3 (verified replan point, not flown) | 7.5 | 75 % |
+| §1 + §2 + §3 (3D replanning, not flown) | 7.5 | 75 % |
 | All four (flown, autonomous) | 10.0 | 100 % |
 
 There is **no separate Assignment 2 pass mark** — none of the milestones above is a minimum.

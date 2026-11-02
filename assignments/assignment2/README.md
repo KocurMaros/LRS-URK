@@ -50,7 +50,7 @@ see [`localization.md`](localization.md#inputs-you-may-and-may-not-use).
 |---|---|
 | §1 Point cloud subscriber | 2.0 |
 | §2 Obstacle detection — stable, correctly positioned | 3.0 |
-| §3 Path replanning — a verified-clear point to fly to | 2.5 |
+| §3 Path replanning in 3D — a real avoidance algorithm, around or over | 2.5 |
 | §4 Flight with replanning — autonomous A → B around the obstacle | 2.5 |
 
 ### Drone localisation — 10 points
