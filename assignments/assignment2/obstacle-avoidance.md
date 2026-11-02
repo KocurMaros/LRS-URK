@@ -75,8 +75,9 @@ gz service -s /world/fei_lrs_world/create \
   frame. The easiest way to pick one: select the drone in the Gazebo GUI, read its pose in the
   Component Inspector, and offset from it along your flight line.
 - `z = 1.5` is half the box height, so the box stands on the floor.
-- For more boxes, run the command again with a different `model name`; every name must be
-  unique.
+- For more boxes, run the command again with a different `model name`. A name that already
+  exists is **not** spawned, even though the reply still says `data: true`; only the Gazebo
+  terminal prints a warning (`Entity named [obstacle_1] already exists`).
 
 To try another placement, remove the box and spawn it again:
 
