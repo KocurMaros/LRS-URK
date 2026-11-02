@@ -94,7 +94,7 @@ a discovery peer — the simulation setup alone is not enough:
 ```bash
 sudo apt install ros-$ROS_DISTRO-rmw-cyclonedds-cpp   # once
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex>auto</ParticipantIndex><Peers><Peer Address="192.168.88.250"/></Peers></Discovery></Domain></CycloneDDS>'
+export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex>auto</ParticipantIndex><Peers><Peer Address="10.0.7.250"/></Peers></Discovery></Domain></CycloneDDS>'
 ros2 daemon stop; ros2 topic list
 ```
 
