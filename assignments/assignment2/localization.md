@@ -198,8 +198,14 @@ fly two laps through these **relative ENU offsets**:
   about 60–90 seconds.
 - The teacher disables GPS for 15 seconds during a middle leg. Your flight and estimator must
   continue; no manual input is allowed after mission start.
-- MAVROS state, arming/mode services, and position/velocity setpoint outputs remain allowed. Only
-  using MAVROS localisation as feedback is forbidden.
+- **Your estimate flies the drone.** Close the position loop yourself and send **velocity
+  setpoints** computed from your estimate — for example `v = clamp(Kp · (target − estimate),
+  0.5 m/s)` — on `/mavros/setpoint_raw/local`. Do not send the waypoints as position setpoints:
+  ArduPilot would fly to them on its own EKF, and your estimate would only decide when a waypoint
+  counts as reached. Velocity targets expire after `GUID_TIMEOUT` (3 s by default), so publish
+  them continuously.
+- MAVROS state and arming/mode services remain allowed. Only using MAVROS localisation as
+  feedback is forbidden.
 
 **Accepted when:** on a teacher-selected seed, the complete takeoff, two-lap route, outage,
 return, and landing succeed unattended, with the controller demonstrably driven by your estimator.
