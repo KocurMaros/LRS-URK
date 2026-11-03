@@ -56,6 +56,37 @@ in the world file, so `fei_lrs_drone` ends up prefixed twice. Check `ros2 topic 
 /fei_lrs_drone/stereo_camera/points --field header.frame_id` if RViz shows nothing and you
 suspect a frame mismatch — this is the value your own node's TF handling needs too.
 
+### Placing an obstacle
+
+The world has no obstacle on your A → B line; you place one yourself, and at the defence your
+teacher places one somewhere you have not tested. It has to be **static**, so it does not fall
+over, and **tall enough to cross your flight altitude**. A box inserted from the Gazebo GUI's
+shape toolbar is a 1 m cube that drops to the floor, below a typical flight corridor.
+
+With the world running, spawn a static orange box with `scripts/spawn_obstacle.sh`:
+
+```bash
+scripts/spawn_obstacle.sh obstacle_1 16 7          # 0.6 × 0.6 × 3 m box at (16, 7)
+scripts/spawn_obstacle.sh wall_1 16 7 2 0.6 2.5    # 2 m wide, 0.6 m deep, 2.5 m tall
+scripts/spawn_obstacle.sh --remove obstacle_1      # remove it again
+```
+
+The arguments are `NAME X Y [WIDTH] [DEPTH] [HEIGHT] [YAW]`; `--help` lists them.
+
+- `X Y` is the box centre in **Gazebo world coordinates**, not your MAVROS local ENU frame. The
+  drone spawns at (13, 7) with its depth camera looking along +X, so (16, 7) is 3 m in front of
+  it. To check a position, select a model in the Gazebo GUI and read its pose in the Component
+  Inspector.
+- `WIDTH` is the size along world Y, `DEPTH` along world X, `HEIGHT` upwards. The defaults are
+  0.6, 0.6 and 3 m, and the box always stands on the floor. Keep it taller than your flight
+  altitude, or the drone simply flies over it.
+- `YAW` rotates the box about Z, in radians (`1.5708` is 90°).
+- Every name must be unique, and the script refuses one that already exists. To move a box,
+  remove it and spawn it again.
+
+The script wraps gz-sim's `/world/<world>/create` and `/world/<world>/remove` services; read it
+if you would rather call them yourself.
+
 ## Specification
 
 ### 1. Point cloud subscriber — 2.0 points

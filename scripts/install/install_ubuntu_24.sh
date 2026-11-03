@@ -70,7 +70,15 @@ sudo curl -fsSL https://packages.osrfoundation.org/gazebo.gpg -o /usr/share/keyr
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" |
   sudo tee /etc/apt/sources.list.d/gazebo-stable.list >/dev/null
 
-if ! dpkg-query -W ros2-apt-source >/dev/null 2>&1; then
+# (Re)install the ROS apt source when it is missing or was built for another Ubuntu release.
+# After an in-place upgrade from 22.04 the old ros2-apt-source (version "X.Y.Z~jammy") is
+# still installed and keeps apt pointed at the jammy repository, so no ros-jazzy-* packages
+# can be found.
+UBUNTU_CODENAME_NOW="${UBUNTU_CODENAME:-${VERSION_CODENAME}}"
+ROS_APT_SOURCE_INSTALLED="$(dpkg-query -W -f='${Version}' ros2-apt-source 2>/dev/null || true)"
+if [[ "$ROS_APT_SOURCE_INSTALLED" != *"~${UBUNTU_CODENAME_NOW}" ]]; then
+  [[ -z "$ROS_APT_SOURCE_INSTALLED" ]] || \
+    log "Replacing ROS apt source $ROS_APT_SOURCE_INSTALLED with the $UBUNTU_CODENAME_NOW one"
   ROS_APT_SOURCE_VERSION="$(
     curl -fsSL https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest |
       sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' |

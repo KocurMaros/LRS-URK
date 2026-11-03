@@ -19,7 +19,9 @@ on `gz sim` with ArduPilot SITL via the
 - `tutorial/ros2_cheatsheet.md` — ROS 2 workspace layout, console commands, and getting a
   topic from `ros2 topic echo` into your C++ node.
 - `scripts/` — launch scripts for each piece (`run_gazebo.sh`, `run_sitl.sh`,
-  `run_mavros.sh`); see [Running the simulation](#running-the-simulation).
+  `run_mavros.sh`); see [Running the simulation](#running-the-simulation). Also
+  `spawn_obstacle.sh`, which places a box obstacle in the running world — see
+  [Placing an obstacle](assignments/assignment2/obstacle-avoidance.md#placing-an-obstacle).
 - `assignments/` — the semester's assignments: how the semester works, grading and deadlines
   in [`assignments/README.md`](assignments/README.md), the assignments themselves in
   [`assignments/assignment1/`](assignments/assignment1/) and [`assignments/assignment2/`](assignments/assignment2/).
@@ -129,12 +131,12 @@ Then set the environment and check that the drone is visible:
 
 ```bash
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex>auto</ParticipantIndex><Peers><Peer Address="192.168.88.250"/></Peers></Discovery></Domain></CycloneDDS>'
+export CYCLONEDDS_URI='<CycloneDDS><Domain Id="any"><Discovery><ParticipantIndex>auto</ParticipantIndex><Peers><Peer Address="10.0.7.250"/></Peers></Discovery></Domain></CycloneDDS>'
 ros2 daemon stop; ros2 topic list
 ```
 
 - `RMW_IMPLEMENTATION` switches ROS 2 in this terminal to CycloneDDS.
-- `CYCLONEDDS_URI` adds the drone (`192.168.88.250`) as a discovery peer, so your laptop
+- `CYCLONEDDS_URI` adds the drone (`10.0.7.250`) as a discovery peer, so your laptop
   contacts it directly instead of relying on multicast discovery alone. `ParticipantIndex auto`
   lets several ROS 2 processes on your laptop run side by side.
 - `ros2 daemon stop` throws away the ROS 2 CLI daemon started with the old settings; the next
