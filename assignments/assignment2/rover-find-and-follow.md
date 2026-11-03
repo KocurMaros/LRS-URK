@@ -63,9 +63,9 @@ That world already has, built in:
   their ports colliding" is handled for you; getting two *MAVROS* instances talking to the right
   one each, in the right ROS namespace, is part of the assignment.
 
-Everything else — MAVROS (x2), bridging the cameras and the rover's velocity-command topic into
-ROS 2, the ArUco detector, the search/track controller, and randomizing the rovers' motion — is
-what you build. See the specification below.
+Everything else — MAVROS (x2), bridging the cameras into ROS 2, the ArUco detector and the
+search/track controller — is what you build. The rovers' random motion comes from
+`scripts/randomize_rovers.py`, supplied with the repository. See the specification below.
 
 ## Specification
 
@@ -131,12 +131,16 @@ metres off.
 
 - Once a marker is confirmed, hold a **configurable** altitude above the rover (a parameter, not
   a hardcoded number) and continuously reposition to stay above it as it moves.
-- **Randomize each rover's motion** — out of the box it drives a fixed, precomputable circle,
-  which a controller could solve once and never actually react to. Give each rover a randomly
-  changing speed and yaw rate every few seconds instead (`gz-sim-velocity-control-system` takes
-  a live Twist command on a topic — find the topic name and message type empirically the same
-  way you found `camera_info`'s, do not assume; bridge it with `ros_gz_bridge`). Keep the speed
-  in the same order of magnitude as the fixed circle's — this is a small field, not a racetrack.
+- **Run the supplied rover randomizer** — out of the box each rover drives a fixed,
+  precomputable circle, which a controller could solve once and never actually react to.
+  `scripts/randomize_rovers.py` gives each rover a new random speed and yaw rate every few
+  seconds instead, and keeps it within about 5 m of its circle's centre:
+
+  ```bash
+  scripts/randomize_rovers.py --seed 42      # Ctrl+C stops both rovers; --help lists the limits
+  ```
+
+  Your teacher picks the seed at the defence, so develop against more than one.
 - If the marker is lost from view for longer than a short, **configurable** timeout, drop back
   into search instead of continuing toward a stale last-known position.
 - **Never land.** There is no landing state in this exercise; have a working abort path
@@ -171,8 +175,8 @@ here therefore depends on what you scored on Assignment 1.
   one up. Debugging two SITL/MAVROS stacks and your mission logic simultaneously is much harder
   than either alone.
 - **`gz topic -l` and `gz topic -i -t <topic>` are your friends** for every "what's the exact
-  topic name and message type" question in this assignment — the down camera's `camera_info`,
-  the rover's velocity-command topic, all of it. Don't guess from documentation for a different
+  topic name and message type" question in this assignment — the down camera's `camera_info`
+  and everything else. Don't guess from documentation for a different
   Gazebo version; check the running world.
 - **A fast search leg plus a slow vision pipeline is a bias, not just noise.** If your node reads
   "current" telemetry at the moment it finishes processing a frame rather than at the moment the
@@ -185,13 +189,14 @@ here therefore depends on what you scored on Assignment 1.
 - **The rover model's wheels are cosmetic** — motion comes entirely from
   `gz-sim-velocity-control-system` applying a body-frame twist, not from the wheel joints, so
   nothing on the rover actually rolls. If you ever see a rover tip onto its side (check its
-  `orientation` on `model/aruco_rover_<N>/odometry` — that ground-truth topic exists for exactly
+  orientation on `model/aruco_rover_<N>/pose` — that ground-truth topic exists for exactly
   this kind of debugging, not for your follow controller to consume) its marker stops facing the
   sky and no down-facing camera at any altitude will find it. The collision friction is already
   tuned low enough (`mu = 1.0`, roughly rubber-on-concrete) that the baked-in circle alone runs
-  indefinitely without this happening — if you still hit it after changing the rover's motion
-  yourself, it is almost certainly your own commanded speed/yaw-rate combination asking the box
-  to turn faster than it can slip at that friction, not a pre-existing issue with the model.
+  indefinitely without this happening, and the randomizer ramps its commands so it does not tip
+  the rovers either — if you still hit it after raising the randomizer's limits (`--speed-max`,
+  `--yaw-rate-max`), it is almost certainly that speed/yaw-rate combination asking the box to turn
+  faster than it can slip at that friction, not a pre-existing issue with the model.
 - Keep vision processing and flight control in **separate callback groups** (see
   [`mt_executor_demo`](../../mt_executor_demo/README.md)) — ArUco detection takes real
   processing time per frame, and it must never stall your setpoint publisher.

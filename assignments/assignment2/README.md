@@ -34,7 +34,7 @@ What each topic runs on, to help you choose:
 |---|---|---|---|
 | **World** | `fei_lrs_gazebo_depth.world` | `fei_lrs_gazebo_localization.world` | `fei_lrs_precision_landing.world` |
 | **Vehicles** | 1 drone | 1 drone | 2 drones + 2 rovers |
-| **Bring-up** | 1 × SITL, 1 × MAVROS | 1 × SITL, 1 × MAVROS + the supplied [`localization_sensor_sim`](../../localization_sensor_sim/README.md) package | 2 × SITL, 2 × MAVROS in separate namespaces |
+| **Bring-up** | 1 × SITL, 1 × MAVROS | 1 × SITL, 1 × MAVROS + the supplied [`localization_sensor_sim`](../../localization_sensor_sim/README.md) package | 2 × SITL, 2 × MAVROS in separate namespaces + the supplied `scripts/randomize_rovers.py` |
 | **New input** | Depth camera point cloud, via `ros_gz_bridge` | GPS, VO and gyro on `/localization/*` | Down cameras, via `ros_gz_bridge` |
 | **The new part is** | Perception and replanning | State estimation | Multi-vehicle, computer vision and tracking |
 
